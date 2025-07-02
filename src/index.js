@@ -3,6 +3,9 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { marked } from "marked";
 import hljs from "highlight.js";
 
+
+
+
 // import { GEMINI_API_KEY } from './apikey.js';
 // const ai = new GoogleGenerativeAI(GEMINI_API_KEY);
 
