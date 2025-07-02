@@ -3,13 +3,6 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { marked } from "marked";
 import hljs from "highlight.js";
 
-
-
-
-// import { GEMINI_API_KEY } from './apikey.js';
-// const ai = new GoogleGenerativeAI(GEMINI_API_KEY);
-
-
 let ai = null;
 const textArea = document.getElementById('textArea');
 const sendBtn = document.getElementById('sendBtn');
@@ -66,14 +59,35 @@ if (savedLength !== null) {
 }
 
 
-// KEYS KEYS KEYS
+// KEY MANAGEMENT:
+//
+// ONLY IF USING LOCALLY!! For PUBLIC APPS use OAuth or API proxies.
+//
+// 1. For local development, you can create src/apikey.js:
+//    export const GEMINI_API_KEY = 'your key';
+//    Then uncomment the next line to use it:
+//    // import { GEMINI_API_KEY } from './apikey.js';
+//
+// 2. For demos and most users, use localStorage or sessionStorage for the API key.
+
+const isGhPages = window.location.hostname === "kenoleon.github.io";
 
 function getApiKey() {
-    return localStorage.getItem('bubbleai_api_key') || '';
+    // Uncomment the next line if using apikey.js for local dev:
+    // if (typeof GEMINI_API_KEY !== 'undefined') return GEMINI_API_KEY;
+    if (isGhPages) {
+        return sessionStorage.getItem('bubbleai_api_key') || '';
+    } else {
+        return localStorage.getItem('bubbleai_api_key') || '';
+    }
 }
 
 function setApiKey(key) {
-    localStorage.setItem('bubbleai_api_key', key);
+    if (isGhPages) {
+        sessionStorage.setItem('bubbleai_api_key', key);
+    } else {
+        localStorage.setItem('bubbleai_api_key', key);
+    }
     updateStorageMeter();
 }
 
