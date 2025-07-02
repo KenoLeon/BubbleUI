@@ -171,8 +171,22 @@ function saveContextsToStorage() {
 }
 
 function clearAppStorage() {
-    localStorage.removeItem('bubbleai_contexts');
-    localStorage.removeItem('bubbleai_api_key');
+    // Remove all app-related localStorage keys
+    [
+        'bubbleai_contexts',
+        'bubbleai_api_key',
+        'bubbleai_chats',
+        'bubbleai_sort_order',
+        'bubbleai_dark_mode',
+        'bubbleai_response_length',
+        'bubbleai_prompt_position'
+    ].forEach(key => localStorage.removeItem(key));
+
+    // Also clear sessionStorage API key if on GitHub Pages
+    if (isGhPages) {
+        sessionStorage.removeItem('bubbleai_api_key');
+    }
+
     location.reload();
     updateStorageMeter();
 }
