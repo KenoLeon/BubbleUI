@@ -1,0 +1,70 @@
+/* LOGO BASE STYLES: outlines and text only */
+.bubbleai-logo {
+  position: relative;
+  width: 130px;
+  height: 48px;
+  margin: 0 auto 1.5rem auto;
+}
+
+.bubbleai-logo .bubble,
+.bubbleai-logo .bubble2 {
+  position: absolute;
+  padding: 4px 14px;
+  font-family: 'Poppins', Arial, sans-serif;
+  font-size: 0.95rem;
+  background: transparent !important;
+  color: #888c92;
+  border: 1.5px solid #888c92;
+  box-shadow: none;
+  text-align: center;
+  z-index: 2;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.bubbleai-logo .bubble1 {
+  top: 8px;
+  left: 0;
+  z-index: 2;
+}
+
+.bubbleai-logo .bubble2 {
+  top: 26px;
+  left: 28px;
+  font-size: 0.85rem;
+}
+
+.logo-circle,
+.logo-circle-outline_2,
+.logo-circle-outline {
+  position: absolute;
+  border-radius: 50%;
+  background: transparent !important;
+  border: 1.5px solid #888c92;
+  opacity: 1;
+  z-index: 1;
+}
+
+.logo-circle-outline_2 {
+  width: 14px;
+  height: 14px;
+  right: 30px;
+  top: 2px;
+  z-index: 4;
+}
+
+.logo-circle-outline {
+  width: 24px;
+  height: 24px;
+  left: -11px;
+  top: 20px;
+  z-index: 1;
+}
+
+/* DARK THEME: lighter outlines and text for contrast */
+.dark-theme .bubbleai-logo .bubble,
+.dark-theme .bubbleai-logo .bubble2,
+.dark-theme .logo-circle-outline_2,
+.dark-theme .logo-circle-outline {
+  color: #e7e7e7 !important;
+  border-color: #e7e7e7 !important;
+}

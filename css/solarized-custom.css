@@ -1,0 +1,80 @@
+/* Custom Solarized-inspired theme for highlight.js */
+
+.hljs {
+  display: block;
+  overflow-x: auto;
+  background: #002b36;
+  color: #839496;
+  padding: 1em;
+  border-radius: 8px;
+  font-size: 1em;
+  line-height: 1.5;
+  border: 1px solid #073642;
+}
+
+/* Solarized palette */
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal,
+.hljs-section,
+.hljs-link {
+  color: #859900;
+}
+
+.hljs-function .hljs-title,
+.hljs-title {
+  color: #268bd2;
+}
+
+.hljs-string,
+.hljs-meta,
+.hljs-symbol,
+.hljs-template-tag,
+.hljs-template-variable {
+  color: #2aa198;
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: #586e75;
+  font-style: italic;
+}
+
+.hljs-number,
+.hljs-regexp,
+.hljs-variable,
+.hljs-bullet {
+  color: #d33682;
+}
+
+.hljs-type,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-params,
+.hljs-attribute {
+  color: #b58900;
+}
+
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class {
+  color: #cb4b16;
+}
+
+.hljs-tag {
+  color: #93a1a1;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}
+
+/* Optional: subtle shadow for code blocks */
+.hljs {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
