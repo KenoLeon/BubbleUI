@@ -1,0 +1,28 @@
+{
+  "name": "bubble-ui",
+  "version": "1.0.0",
+  "description": "A frontend project with Bootstrap and Gemini integration.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "webpack serve --mode development",
+    "build": "webpack"
+  },
+  "dependencies": {
+    "@google/genai": "^1.5.1",
+    "@google/generative-ai": "^0.24.1",
+    "bootstrap": "^5.3.0",
+    "highlight.js": "^11.11.1",
+    "marked": "^15.0.12"
+  },
+  "author": "",
+  "license": "ISC",
+  "keywords": [],
+  "devDependencies": {
+    "copy-webpack-plugin": "^13.0.0",
+    "html-webpack-plugin": "^5.6.3",
+    "open": "^10.1.2",
+    "webpack": "^5.99.9",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.1"
+  }
+}
