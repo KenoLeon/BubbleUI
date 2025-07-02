@@ -32,6 +32,9 @@ This is an active area of development—feedback and contributions are welcome!
 
 ![Other features](public/BubbleUI_Code.png)
 
+> **Note:**  
+> Bubble UI uses the `"gemini-2.0-flash"` model by default for responses.  
+> You can change the model in the source code (`src/index.js`) if you want to use a different Gemini or LLM model.
 
 ---
 
