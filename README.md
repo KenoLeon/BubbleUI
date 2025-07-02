@@ -17,7 +17,7 @@ This is an active area of development—feedback and contributions are welcome!
 
 ## Features
 
-- **Response length control** (slider) Adjust the length of the AI’s
+- **Response length control** (slider) Adjust the length of the AI’s Response, change the prompt/slider for other AI driven UI functions.
 
 ![Response Length Control Demo](public/BubbleUI_Resp.png)
 
