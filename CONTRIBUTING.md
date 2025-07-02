@@ -37,25 +37,6 @@ If you’re looking for a place to start, pick any unchecked item or suggest you
 - [ ] Add a linter (ESLint) and a formatting tool (Prettier)
 - [ ] Set up a GitHub Actions workflow for CI (lint, build, test)
 
-### Documentation
-
-- [ ] Expand the README.md with:
-    - [ ] Screenshots/gifs of the UI
-    - [ ] Full feature list and usage instructions
-    - [ ] Keyboard shortcuts and accessibility notes
-    - [ ] Tech stack and architecture overview
-    - [ ] FAQ and troubleshooting
-- [ ] Add a `CONTRIBUTING.md` with:
-    - [ ] How to set up the project locally
-    - [ ] Coding style guidelines
-    - [ ] How to submit issues and pull requests
-- [ ] Add a LICENSE file (MIT or similar)
-- [ ] Add a CODE_OF_CONDUCT.md (optional, but good for open source)
-
-### Performance
-
-- [ ] Minify and optimize CSS/JS for production builds
-- [ ] Lazy-load heavy dependencies (like highlight.js) if needed
 
 ### Community
 
@@ -113,13 +94,6 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 See the [GitHub Issues](https://github.com/KenoLeon/BubbleUI/issues) for ideas and open tasks.  
 Look for issues tagged `good first issue` if you’re new to the project.
-
----
-
-## Community
-
-- Be respectful and constructive in all interactions.
-- See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) (if present) for more.
 
 ---
 
