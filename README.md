@@ -100,6 +100,31 @@ MIT
 
 ---
 
+## Future Enhancements
+
+Based on community feedback and our roadmap, here are planned features for future releases:
+
+### v2.0 Roadmap
+- **Multiple LLM provider support** (OpenAI, Claude, etc.)
+- **Advanced context management** with context drawer and better organization
+- **Export/import functionality** for chats and contexts
+- **IndexedDB migration** for better performance with large datasets
+- **Mobile-first responsive design** improvements
+- **Plugin/extension system** for custom features
+- **Real-time collaboration** features
+- **Advanced prompt templates** and management
+
+### Community Suggestions
+- **Keyboard shortcuts** for power users
+- **Chat search and filtering**
+- **Custom themes** beyond dark/light mode
+- **Voice input/output** integration
+- **Integration with popular IDEs**
+
+*Have an idea? [Open an issue](https://github.com/KenoLeon/BubbleUI/issues) or contribute!*
+
+---
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines and future roadmap.
