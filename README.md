@@ -111,7 +111,7 @@ Based on community feedback and our roadmap, here are planned features for futur
 - **IndexedDB migration** for better performance with large datasets
 - **Mobile-first responsive design** improvements
 - **Prompt Area enhancements** 
-
+- **Standalone desktop app:** Make Bubble UI available as a native app using Tauri or Electron.
 
 
 ### Community Suggestions
