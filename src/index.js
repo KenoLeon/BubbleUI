@@ -72,6 +72,11 @@ if (savedLength !== null) {
 
 const isGhPages = window.location.hostname === "kenoleon.github.io";
 
+
+/**
+* Retrieves the stored Gemini API key from localStorage or sessionStorage.
+* @returns {string} The API key if stored, empty string if not found.
+*/
 function getApiKey() {
     // Uncomment the next line if using apikey.js for local dev:
     // if (typeof GEMINI_API_KEY !== 'undefined') return GEMINI_API_KEY;
@@ -82,6 +87,10 @@ function getApiKey() {
     }
 }
 
+/** 
+ * Stores the Gemini API key in localStorage or sessionStorage.
+ * @param {string} key - The API key to store.
+*/
 function setApiKey(key) {
     if (isGhPages) {
         sessionStorage.setItem('bubbleai_api_key', key);
@@ -91,8 +100,11 @@ function setApiKey(key) {
     updateStorageMeter();
 }
 
-
-
+/**
+* Updates the UI to show the current API key status.
+* Shows success state if key is set, warning if not 
+* Also sets up the change API key button functionality.
+*/
 function updateApiKeyStatus() {
     const apiKey = getApiKey();
     const statusDiv = document.getElementById('apiKeyStatus');
@@ -122,7 +134,10 @@ document.getElementById('saveApiKeyBtn').addEventListener('click', () => {
     }
 });
 
-// PROVIDER MODEL MANAGEMENT:
+/**
+* Initializes the Google Generative AI instance with the stored API key.
+* Creates a new GoogleGenerativeAI object if a valid key is available.
+*/
 function initializeGemini() {
     const key = getApiKey();
     if (key) {
@@ -132,11 +147,19 @@ function initializeGemini() {
 
 // LOCAL STORAGE:
 
+/**
+ * Loads saved contexts from localStorage 
+ * @returns {Array} Array of context objects, empty array if none stored.
+ */
 function loadContextsFromStorage() {
     const data = localStorage.getItem('bubbleai_contexts');
     return data ? JSON.parse(data) : [];
 }
 
+/**
+ * Calculates the total size of localStorage data in megabytes
+ * @returns {number} Size in MB rounded to 4 decimal places
+ */
 function getLocalStorageSizeMB() {
     let total = 0;
     for (let key in localStorage) {
@@ -147,7 +170,11 @@ function getLocalStorageSizeMB() {
     return total / (1024 * 1024); // MB
 }
 
-
+/**
+ * Updates the storage meter UI to show current localStorage usage
+ * Changes color based on usage percentage (green/yellow/red)
+ * Updates labels with current and max values
+ */
 function updateStorageMeter() {
     const used = getLocalStorageSizeMB();
     const max = 5; // Most browsers allow 5MB
@@ -164,12 +191,20 @@ function updateStorageMeter() {
         'linear-gradient(90deg, #bfc4cc, #9cacbe)';
 }
 
-
+/**
+ * Saves the current contexts array to localStorage
+ * Updates the storage meter after saving
+*/
 function saveContextsToStorage() {
     localStorage.setItem('bubbleai_contexts', JSON.stringify(contexts));
     updateStorageMeter();
 }
 
+/**
+ * Clears all app-related data from localStorage and sessionStorage
+ * Removes API keys, chats, contexts, and settings
+ * Reloads the page after clearing
+ */
 function clearAppStorage() {
     // Remove all app-related localStorage keys
     [
@@ -196,13 +231,20 @@ document.getElementById('clearAppDataBtn').addEventListener('click', clearAppSto
 
 // HELPER FUNCTIONS:
 
+/**
+ * Changes the chat sort order and updates the UI
+ * @param {string} newOrder - Either 'recent' or 'oldest'
+ */
 function setSortOrder(newOrder) {
     sortOrder = newOrder;
     localStorage.setItem('bubbleai_sort_order', sortOrder);
     document.getElementById('sortOrderLabel').textContent = sortOrder === 'recent' ? 'Recent' : 'Oldest';
 }
 
-
+/**
+ * Shows the loading animation for pending prompts
+ * Creates animated circles in the loading bubble container
+ */
 function showPromptLoadingBubble() {
     const container = document.getElementById('loadingBubblePrompt');
     if (!container) return;
@@ -215,6 +257,10 @@ function showPromptLoadingBubble() {
     `;
 }
 
+/**
+ * Removes the loading animation from the prompt area
+ * Clears the loading bubble container
+ */
 function removePromptLoadingBubble() {
     const container = document.getElementById('loadingBubblePrompt');
     if (container) container.innerHTML = '';
@@ -224,6 +270,12 @@ function removePromptLoadingBubble() {
 
 // CHAT HISTORY MANAGEMENT:
 
+/**
+ * Converts chat history array to a formatted string for AI prompts
+ * @param {Array} history - Array of chat messages with role and text properties
+ * @param {number} maxTurns - Maximum number of conversation turns to include (default: 10) 
+ * @returns {string} Formatted chat history string
+ */
 function buildChatHistoryString(history, maxTurns = 10) {
     // Only include the last N turns for brevity
     let turns = [];
@@ -241,8 +293,11 @@ function buildChatHistoryString(history, maxTurns = 10) {
 }
 
 
-// SAVE CHAT FUNCTIONALITY:
-
+/**
+ * Saves the current chat to localStorage
+ * Prompts user for chat name and creates a new chat entry
+ * Updates activeChatId and re-renders chat list
+ */
 function saveCurrentChat() {
     let chats = JSON.parse(localStorage.getItem('bubbleai_chats') || '[]');
     const name = prompt('Name this chat:', `Chat ${chats.length + 1}`);
@@ -264,6 +319,11 @@ function saveCurrentChat() {
 
 // MAIN CHAT DISPLAY
 
+/**
+ * Renders the list of saved chats in the sidebar 
+ * Creates buttons for each chat with edit and delete options
+ * Highlights the currently active chat
+ */
 function renderChatList() {
     const chatListDiv = document.getElementById('chatList');
     chatListDiv.innerHTML = '';
@@ -313,6 +373,11 @@ function renderChatList() {
     });
 }
 
+/**
+ * Loads a specific chat from localStorage
+ * @param {number} idx - Index of the chat to load
+ * Restores chat history and width settings
+ */
 function loadChat(idx) {
     let chats = JSON.parse(localStorage.getItem('bubbleai_chats') || '[]');
     if (!chats[idx]) return;
@@ -331,6 +396,11 @@ function loadChat(idx) {
     updateBubblesColWidth();
 }
 
+/**
+ * Deletes a chat from localStorage
+ * @param {number} idx - Index of the chat to delete
+ * Updates chat list and loads another chat if current one is deleted
+ */
 function deleteChat(idx) {
     let chats = JSON.parse(localStorage.getItem('bubbleai_chats') || '[]');
     if (!chats[idx]) return;
@@ -349,7 +419,10 @@ function deleteChat(idx) {
     renderChatHistory();
 }
 
-
+/**
+ * Updates the currently active chat in localStorage
+ * Saves the current chat history to the active chat
+ */
 function updateActiveChatInStorage() {
     if (!activeChatId) return;
     let chats = JSON.parse(localStorage.getItem('bubbleai_chats') || '[]');
@@ -361,7 +434,11 @@ function updateActiveChatInStorage() {
     }
 }
 
-
+/**
+ * Renames a saved chat
+ * @param {number} idx - Index of the chat to rename
+ * Prompts user for new name and updates localStorage
+ */
 function renameChat(idx) {
     let chats = JSON.parse(localStorage.getItem('bubbleai_chats') || '[]');
     if (!chats[idx]) return;
@@ -397,6 +474,11 @@ document.getElementById('addChatBtn').addEventListener('click', () => {
 const chatWidthSlider = document.getElementById('chatWidthSlider');
 const chatWidthLabel = document.getElementById('chatWidthLabel');
 
+/**
+ * Updates the width of chat bubbles based on slider value
+ * Applies width to all bubble containers and sets max-width for individual bubbles
+ * Saves the width setting to the active chat in localStorage
+ */
 function updateBubblesColWidth() {
     const width = chatWidthSlider.value;
     chatWidthLabel.textContent = width + '%';
@@ -478,7 +560,11 @@ saveContextBtn.addEventListener('click', () => {
     }
 });
 
-
+/**
+ * Renders the list of contexts in the sidebar
+ * Creates buttons for each context with inspect and toggle options
+ * Shows active/inactive state for each context
+ */
 function renderContextList() {
     const contextList = document.getElementById('contextList');
     contextList.innerHTML = '';
@@ -520,6 +606,11 @@ function renderContextList() {
     });
 }
 
+/**
+ * Opens the context inspection modal for editing
+ * @param {number} idx - Index of the context to edit
+ * Populates modal fields with context data
+ */
 function openContextModal(idx) {
     editingContextIdx = idx;
     const ctx = contexts[idx];
@@ -560,7 +651,11 @@ $('#inspectContextModal').on('hidden.bs.modal', function () {
 // CONTEXT BLOCK
 
 
-
+/**
+ * Moves the prompt input to either top or bottom of chat area
+ * Updates UI icons and scrolls to appropriate position
+ * Handles smooth scrolling and positioning
+ */
 function updatePromptPosition() {
     const promptContainer = document.getElementById('promptContainer');
     const chatArea = document.getElementById('chatArea');
@@ -636,6 +731,11 @@ responseLength.addEventListener('input', () => {
     localStorage.setItem('bubbleai_response_length', responseLength.value);
 });
 
+/**
+ * Updates the send button state based on text input and Tab key
+ * Enables button only when text is present and Tab is held
+ * Adds/removes 'primed' class for visual feedback
+ */
 function updateSendBtn() {
     if (textArea.value.trim() && tabHeld) {
         sendBtn.disabled = false;
@@ -763,6 +863,12 @@ sendBtn.addEventListener('click', async () => {
     }    
 });
 
+/**
+ * Renders the main chat display area
+ * Groups messages into user/AI pairs and handles sort order 
+ * Creates delete buttons for each message pair 
+ * Applies chat width settings and auto-scrolls based on sort order
+ */
 function renderChatHistory() {
     let chat = document.getElementById('chatArea');
     if (!chat) {
@@ -845,7 +951,13 @@ function renderChatHistory() {
     }
 }
 
-
+/**
+ * Displays a single message bubble in the chat
+ * @param {string} message - The message text to display
+ * @param {string} sender - Either 'user' or 'llm' to determine bubble style
+ * @param {HTMLElement} chat - The chat container element
+ * @param {boolean} pending - Whether the message is still pending (shows loading state)
+ */
 function displayMessage(message, sender, chat, pending = false) {
     if (!chat) {
         chat = document.getElementById('chatArea');
