@@ -14,9 +14,9 @@ If you’re looking for a place to start, pick any unchecked item or suggest you
 ### Core Features & Improvements
 
 - [ ] Modularize `index.js` (split into UI, storage, chat, and context modules)
-- [ ] Add JSDoc comments to all functions and complex logic
+- [x] Add JSDoc comments to all functions and complex logic
 - [ ] Refactor long functions (e.g., `renderChatHistory`) into smaller, focused helpers
-- [ ] Remove any remaining dead code or unused variables
+- [x] Remove any remaining dead code or unused variables
 - [ ] Add autosave chat history option
 - [ ] Migrate from localStorage to IndexedDB for larger data support
 - [ ] Add better mobile support and/or a dedicated mobile design
@@ -29,7 +29,8 @@ If you’re looking for a place to start, pick any unchecked item or suggest you
 
 - [ ] Improve ARIA attributes and keyboard navigation
 - [ ] Ensure color contrast meets WCAG standards (especially in dark mode)
-- [ ] Add focus styles for all interactive elements
+- [x] Add focus styles for all interactive elements
+- [ ] Ensure all sidebar/context controls are reachable and usable via keyboard navigation
 
 ### Testing & CI
 
