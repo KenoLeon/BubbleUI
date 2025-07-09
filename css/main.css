@@ -42,10 +42,44 @@
   }
 }
 
+/* Focus styles for accessibility */
+button:focus,
+input:focus,
+select:focus,
+textarea:focus,
+.icon-btn:focus,
+.chat-list-btn:focus {
+  outline: 2px solid #2684FF;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px #B2D4FF;
+  z-index: 2;
+  transition: outline 0.2s, box-shadow 0.2s;
+}
+
 body {
     font-family: Arial, sans-serif;    
     background-color: #3b3b3b;
     color: #d7d7d7;
+}
+
+#activeContextMarker {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  margin: 0 auto 8px auto;
+  min-height: 8px;
+  background: none;
+  border: none;
+  position: relative;
+}
+
+.context-bar {
+  width: 18px;
+  height: 6px;
+  background: #4d9d55;
+  border-radius: 3px;
+  display: inline-block;
 }
 
 
