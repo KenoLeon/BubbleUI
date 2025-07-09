@@ -19,7 +19,7 @@ This is an active area of development—feedback and contributions are welcome!
 
 - **Response length control** (slider) Adjust the length of the AI’s Response, change the prompt/slider for other AI driven UI functions.
 
-![Response Length Control Demo](public/BubbleUI_Resp.png)
+![Response Length Control Demo](https://raw.githubusercontent.com/KenoLeon/BubbleUI/main/docs/BubbleUI_Resp.png)
 
 - **Multi-conversation**: Save, rename, and switch between chats
 - **Context management**: Add, edit, and activate context snippets for better responses
@@ -28,11 +28,11 @@ This is an active area of development—feedback and contributions are welcome!
 
 Here we add support tickets as context :
 
-![Response Length Control Demo](public/BubbleUI_Ctxt_Example.png)
+![Context Example](https://raw.githubusercontent.com/KenoLeon/BubbleUI/main/docs/BubbleUI_Ctxt_Example.png)
 
 And ask the AI to prioritize (Note the context markers on top of the prompt area):
 
-![Context Demo](public/BubbleUI_Ctxt_markers.png)
+![Context Demo](https://raw.githubusercontent.com/KenoLeon/BubbleUI/main/docs/BubbleUI_Ctxt_markers.png)
 
 > The green bars above the prompt area indicate how many contexts are currently active.
 
@@ -40,7 +40,7 @@ And ask the AI to prioritize (Note the context markers on top of the prompt area
 - **Chat width adjustment** (slider)
 - **Prompt position & sort order toggles**
 
-![Other features](public/BubbleUI_Code.png)
+![Other features](https://raw.githubusercontent.com/KenoLeon/BubbleUI/main/docs/BubbleUI_Code.png)
 
 > **Note:**  
 > Bubble UI uses the `"gemini-2.0-flash"` model by default for responses.  
