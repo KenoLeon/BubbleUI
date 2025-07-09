@@ -116,7 +116,7 @@ Based on community feedback and our roadmap, here are planned features for futur
 
 ### v2.0 Roadmap
 - **Multiple LLM provider support** (OpenAI, Claude, etc.)/ Model Abstraction.
-- **Advanced context management** context drawer, contextualize chat, context indicators.
+- **Advanced context management** context drawer, contextualize chat, ~~context indicators~~.
 - **Export/import functionality** for chats and contexts
 - **IndexedDB migration** for better performance with large datasets
 - **Mobile-first responsive design** improvements
