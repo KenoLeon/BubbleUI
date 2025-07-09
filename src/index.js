@@ -561,6 +561,31 @@ saveContextBtn.addEventListener('click', () => {
 });
 
 /**
+ * Updates the active context marker above the prompt area.
+ * Renders one short green bar for each active context, or hides the marker if none are active.
+ * Should be called after adding, toggling, or deleting contexts to keep the indicator in sync.
+ */
+
+function updateActiveContextMarker() {
+    const marker = document.getElementById('activeContextMarker');
+    if (!marker) return;
+    const activeCount = contexts ? contexts.filter(ctx => ctx.active).length : 0;
+    marker.innerHTML = '';
+    if (activeCount > 0) {
+        marker.style.display = 'flex';
+        for (let i = 0; i < activeCount; i++) {
+            const bar = document.createElement('div');
+            bar.className = 'context-bar';
+            marker.appendChild(bar);
+        }
+        marker.title = activeCount === 1 ? "1 active context" : `${activeCount} active contexts`;
+    } else {
+        marker.style.display = 'none';
+    }
+}
+
+
+/**
  * Renders the list of contexts in the sidebar
  * Creates buttons for each context with inspect and toggle options
  * Shows active/inactive state for each context
@@ -603,6 +628,7 @@ function renderContextList() {
         wrapper.appendChild(inspectBtn);
         wrapper.appendChild(activeBtn);
         contextList.appendChild(wrapper);
+        updateActiveContextMarker();
     });
 }
 
@@ -638,6 +664,7 @@ document.getElementById('deleteContextBtn').addEventListener('click', () => {
         contexts.splice(editingContextIdx, 1);
         saveContextsToStorage();
         renderContextList();
+        updateActiveContextMarker();
         $('#inspectContextModal').modal('hide');
         editingContextIdx = null;
     }

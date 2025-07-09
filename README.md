@@ -15,7 +15,7 @@ This is an active area of development—feedback and contributions are welcome!
 
 ---
 
-## Features
+## Features 
 
 - **Response length control** (slider) Adjust the length of the AI’s Response, change the prompt/slider for other AI driven UI functions.
 
@@ -24,7 +24,17 @@ This is an active area of development—feedback and contributions are welcome!
 - **Multi-conversation**: Save, rename, and switch between chats
 - **Context management**: Add, edit, and activate context snippets for better responses
 
-![Context Demo](public/BubbleUI_Ctxt.png)
+#### EXAMPLE:
+
+Here we add support tickets as context :
+
+![Response Length Control Demo](public/BubbleUI_Ctxt_Example.png)
+
+And ask the AI to prioritize (Note the context markers on top of the prompt area):
+
+![Context Demo](public/BubbleUI_Ctxt_markers.png)
+
+> The green bars above the prompt area indicate how many contexts are currently active.
 
 - **Markdown & code highlighting** in responses
 - **Chat width adjustment** (slider)

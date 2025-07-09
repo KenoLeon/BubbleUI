@@ -62,6 +62,26 @@ body {
     color: #d7d7d7;
 }
 
+#activeContextMarker {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  margin: 0 auto 8px auto;
+  min-height: 8px;
+  background: none;
+  border: none;
+  position: relative;
+}
+
+.context-bar {
+  width: 18px;
+  height: 6px;
+  background: #4d9d55;
+  border-radius: 3px;
+  display: inline-block;
+}
+
 
 .text-field {
     margin: 20px 0;
