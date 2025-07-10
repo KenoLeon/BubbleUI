@@ -726,7 +726,8 @@ function updatePromptPosition() {
 document.getElementById('viewChatMemoryBtn').addEventListener('click', () => {
     // Build the chat memory string (same as used for prompt)
     const chatMemory = buildChatHistoryString(chatHistory);
-    document.getElementById('chatMemoryContent').textContent = chatMemory || "(No chat memory yet)";
+    const note = "Note: Context is not saved as part of the chat history. The context(s) active during each message are not recorded.\n\n";
+    document.getElementById('chatMemoryContent').textContent = note + (chatMemory || "(No chat memory yet)");
     $('#chatMemoryModal').modal('show');
 });
 
