@@ -60,6 +60,34 @@
   z-index: 1;
 }
 
+
+.logo-dot {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #888c92;
+  z-index: 5;
+  transition: background 0.2s;
+}
+
+/* Position the dots near the bubbles */
+.dot1 {
+  left: -6px;
+  top: 23px;
+}
+
+.dot2 {
+  left: 94px;
+  top: 4px;
+}
+
+/* Dark theme support */
+.dark-theme .logo-dot {
+  background: #e7e7e7;
+}
+
+
 /* DARK THEME: lighter outlines and text for contrast */
 .dark-theme .bubbleai-logo .bubble,
 .dark-theme .bubbleai-logo .bubble2,
