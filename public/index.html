@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/logo.css">
+    <link rel="stylesheet" href="css/avatar.css">
+    
     <link rel="stylesheet" href="css/solarized-custom.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
@@ -26,6 +28,8 @@
                     <div class="logo-circle logo-circle-outline_2"></div>
                     <div class="logo-circle logo-circle-outline"></div>
                     <div class="bubble bubble1">Bubble UI</div>
+                    <div class="logo-dot dot1"></div>
+                    <div class="logo-dot dot2"></div>
                 </a>
             
                 <!-- Slider for response length -->            <div class="form-group mb-4 sidebar-response-length">
@@ -40,6 +44,13 @@
                         Chat Width: <span id="chatWidthLabel" class="font-weight-bold">80%</span>
                     </label>
                     <input type="range" class="custom-range" id="chatWidthSlider" min="50" max="100" step="1" value="80">
+                </div>
+
+                <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="toggleAvatar" checked>
+                <label class="form-check-label" for="toggleAvatar">
+                    Show Avatar
+                </label>
                 </div>
 
                 <div class="sidebar-divider"></div>
@@ -106,8 +117,15 @@
                     </button>
                 </div>
             </div>
-            <!-- Main content in a wider column -->
+
+
+            <!-- Main content in a wider column -->            
+
             <div id="mainContent" class="col-sm-8 p-4 mx-auto d-flex flex-column">
+
+            
+
+
                 <div id="promptContainer" class="form-group mt-3">
 
                     <!-- context marker -->

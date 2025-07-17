@@ -18,11 +18,15 @@ const contextFile = document.getElementById('contextFile');
 const responseLengthPresets = [
     "",
     "Answer in as few words or sentences as possible.",
-    "Answer in a medium length, a few sentences.",
+    "Answer in a medium length, at most two paragraphs.",
     "Answer in a long, detailed paragraph.",
     "Answer in a full, comprehensive and elaborate response."
 ];
 
+const emoticonInstruction =
+  "You have a 50px by 50px space to visually convey your emotion and any other information you deem valuable. " +
+  "You may use up to 5 characters (including plain text, text emoticons, emoji, or symbols; don't overuse or repeat them unless necessary). " +
+  "Start your response with your emoticon (max 5 characters), then a space, then your answer.";
 
 let sortOrder = localStorage.getItem('bubbleai_sort_order') || 'recent';
 document.getElementById('sortOrderLabel').textContent = sortOrder === 'recent' ? 'Recent' : 'Oldest';
@@ -845,7 +849,12 @@ sendBtn.addEventListener('click', async () => {
     }
 
     // 5. Build the full prompt
-    let fullPrompt = `${contextBlock}${prePrompt}\n\n`;
+    const showAvatar = document.getElementById('toggleAvatar')?.checked;
+    let fullPrompt = '';
+    if (showAvatar) {
+        fullPrompt += emoticonInstruction;
+    }
+    fullPrompt += `${contextBlock}${prePrompt}\n\n`;
     if (chatHistoryEnabled && historyBlock) {
         fullPrompt += `${historyBlock}\n`;
     }
@@ -869,10 +878,32 @@ sendBtn.addEventListener('click', async () => {
         }
 
         // Add the LLM response and re-render
-        chatHistory.push({ role: 'llm', text: result.response.text() });
+        // Parse emoticon and answer from LLM response
+        const rawResponse = result.response.text();
+        let emoticon = ':|';
+        let answer = rawResponse;
+
+        // Match up to 5 non-space characters at the start, then a space, then the answer
+        const match = rawResponse.match(/^([^\s]{1,5})\s+(.*)$/s);
+        if (match) {
+            emoticon = match[1];
+            answer = match[2].trim();
+        }
+        
+
+        // Log for debugging
+        console.log("LLM raw response:", rawResponse);
+        console.log("Parsed emoticon:", emoticon);
+        console.log("Parsed answer:", answer);
+
+
+
+        // Store both emoticon and answer in chatHistory
+        chatHistory.push({ role: 'llm', text: answer, emoticon });
         renderChatHistory();
         updateBubblesColWidth();
         updateActiveChatInStorage();
+
     } catch (e) {
         removePromptLoadingBubble();
 
@@ -962,8 +993,27 @@ function renderChatHistory() {
         }
 
         // LLM bubble (no delete button)
+        const showAvatar = document.getElementById('toggleAvatar')?.checked;
         if (aiMsg) {
-            displayMessage(aiMsg.text, 'llm', bubblesCol);
+            if (showAvatar) {
+                // Create avatar element
+                const avatarDiv = document.createElement('div');
+                avatarDiv.className = 'avatar-face mr-2';
+                const emoticon = aiMsg.emoticon || ':|';
+                avatarDiv.innerHTML = `<div class="avatar-emoticon">${emoticon}</div>`;
+
+                // Create a wrapper for avatar + AI bubble
+                const aiRow = document.createElement('div');
+                aiRow.className = 'd-flex align-items-start';
+
+                aiRow.appendChild(avatarDiv);
+                displayMessage(aiMsg.text, 'llm', aiRow);
+
+                bubblesCol.appendChild(aiRow);
+            } else {
+                // Just show the AI response, no avatar
+                displayMessage(aiMsg.text, 'llm', bubblesCol);
+            }
         }
 
         // Assemble row
@@ -1024,6 +1074,9 @@ document.getElementById('markdownToggle').addEventListener('change', () => {
     updateBubblesColWidth();
 });
 
+document.getElementById('toggleAvatar').addEventListener('change', () => {
+    renderChatHistory();
+});
 
 document.addEventListener('DOMContentLoaded', function () {
     updateApiKeyStatus();
