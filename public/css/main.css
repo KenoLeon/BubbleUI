@@ -144,11 +144,16 @@ label {
     color: #000000 !important;
 }
 
+
 .response-length-label {
     color: #444 !important;
     font-weight: 500;
 }
 
+#editAvatarPrompt i.bi-pencil {
+  font-size: 1.1em;
+  vertical-align: middle;
+}
 
 /* CHAT LIST */
 

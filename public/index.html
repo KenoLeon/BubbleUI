@@ -32,25 +32,34 @@
                     <div class="logo-dot dot2"></div>
                 </a>
             
-                <!-- Slider for response length -->            <div class="form-group mb-4 sidebar-response-length">
-                    <label for="responseLength" class="mb-1">
-                        Response Length: <span id="responseLengthLabel" class="font-weight-bold">Default</span>
-                    </label>
+                <!-- Slider for response length -->
+                <div class="form-group mb-4 sidebar-response-length">
+                    <div class="d-flex align-items-center mb-1">
+                        <label for="responseLength" class="mb-0 flex-grow-1">
+                            Response Length: <span id="responseLengthLabel" class="font-weight-bold">Default</span>
+                        </label>
+                        <button id="editResponseLengthPrompt" class="btn btn-link p-0 ml-2" title="Edit response length prompt">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                    </div>
                     <input type="range" class="custom-range" id="responseLength" min="0" max="4" step="1" value="0">
                 </div>
-                <!-- Slider for chat width -->
-                 <div class="form-group mb-4 sidebar-chat-width">
+                <!-- Slider for chat width -->           <div class="form-group mb-4 sidebar-chat-width">
                     <label for="chatWidthSlider" class="mb-1">
                         Chat Width: <span id="chatWidthLabel" class="font-weight-bold">80%</span>
                     </label>
                     <input type="range" class="custom-range" id="chatWidthSlider" min="50" max="100" step="1" value="80">
                 </div>
 
-                <div class="form-check mb-2">
-                <input class="form-check-input" type="checkbox" id="toggleAvatar" checked>
-                <label class="form-check-label" for="toggleAvatar">
-                    Show Avatar
-                </label>
+                <div class="form-check mb-2 d-flex align-items-center">
+                    <input class="form-check-input" type="checkbox" id="toggleAvatar" checked>
+                    <label class="form-check-label mb-0 ml-2" for="toggleAvatar">
+                        Show Avatar
+                    </label>
+                    &nbsp;
+                    <button id="editAvatarPrompt" class="btn btn-link p-0 ml-2" title="Edit avatar prompt">
+                        <i class="bi bi-pencil"></i>
+                    </button>
                 </div>
 
                 <div class="sidebar-divider"></div>
@@ -228,6 +237,53 @@
                 </div>
             </div>
         </div>
+
+        <!-- Response Length Prompts Modal -->
+<div class="modal fade" id="responseLengthModal" tabindex="-1" aria-labelledby="responseLengthModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="responseLengthModalLabel">Edit Response Length Prompts</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="responseLengthModalBody"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-link" id="resetResponseLengthBtn">Restore Defaults</button>
+        <button type="button" class="btn btn-primary" id="saveResponseLengthBtn">Save</button>
+    </div>
+    </div>
+    </div>
+    </div>
+    
+    <!-- Avatar Prompt Modal -->
+    <div class="modal fade" id="avatarPromptModal" tabindex="-1" aria-labelledby="avatarPromptModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="avatarPromptModalLabel">Edit Avatar Prompt</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <textarea class="form-control" id="avatarPromptInput" rows="4"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link" id="resetAvatarPromptBtn">Restore Default</button>
+                    <button type="button" class="btn btn-primary" id="saveAvatarPromptBtn">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
 
         <!-- API Key Modal -->
         <div class="modal fade" id="apiKeyModal" tabindex="-1" role="dialog" aria-labelledby="apiKeyModalLabel"

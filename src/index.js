@@ -15,7 +15,9 @@ const saveContextBtn = document.getElementById('saveContextBtn');
 const contextText = document.getElementById('contextText');
 const contextFile = document.getElementById('contextFile');
 
-const responseLengthPresets = [
+
+// Default prompts for fallback
+const defaultResponseLengthPresets = [
     "",
     "Answer in as few words or sentences as possible.",
     "Answer in a medium length, at most two paragraphs.",
@@ -23,10 +25,11 @@ const responseLengthPresets = [
     "Answer in a full, comprehensive and elaborate response."
 ];
 
-const emoticonInstruction =
-  "You have a 50px by 50px space to visually convey your emotion and any other information you deem valuable. " +
-  "You may use up to 5 characters (including plain text, text emoticons, emoji, or symbols; don't overuse or repeat them unless necessary). " +
-  "Start your response with your emoticon (max 5 characters), then a space, then your answer.";
+const defaultEmoticonInstruction =
+  "Start your response with your emoticon, text emoji or plain text  (max 5 characters), then a space, then your answer.";
+
+let emoticonInstruction = loadEmoticonInstruction();
+
 
 let sortOrder = localStorage.getItem('bubbleai_sort_order') || 'recent';
 document.getElementById('sortOrderLabel').textContent = sortOrder === 'recent' ? 'Recent' : 'Oldest';
@@ -830,6 +833,7 @@ sendBtn.addEventListener('click', async () => {
 
     // 2. Get the response length instruction
     const lengthValue = responseLength.value;
+    const responseLengthPresets = loadResponseLengthPrompts();
     const prePrompt = responseLengthPresets[lengthValue];
 
     // 3. Gather active contexts
@@ -883,20 +887,14 @@ sendBtn.addEventListener('click', async () => {
         let emoticon = ':|';
         let answer = rawResponse;
 
-        // Match up to 5 non-space characters at the start, then a space, then the answer
-        const match = rawResponse.match(/^([^\s]{1,5})\s+(.*)$/s);
-        if (match) {
-            emoticon = match[1];
-            answer = match[2].trim();
-        }
-        
-
-        // Log for debugging
-        console.log("LLM raw response:", rawResponse);
-        console.log("Parsed emoticon:", emoticon);
-        console.log("Parsed answer:", answer);
-
-
+        if (showAvatar) {
+            // Only parse emoticon if avatar is enabled
+            const match = rawResponse.match(/^([^\s]{1,5})\s+(.*)$/s);
+            if (match) {
+                emoticon = match[1];
+                answer = match[2].trim();
+            }
+        }        
 
         // Store both emoticon and answer in chatHistory
         chatHistory.push({ role: 'llm', text: answer, emoticon });
@@ -1028,6 +1026,111 @@ function renderChatHistory() {
         chat.scrollTop = 0;
     }
 }
+
+
+// CUSTOM PROMPTS FOR AI UI ELEMENTS ( emoticon, prePrompt, etc.)
+
+// EDIT RESPONSE LENGTH PROMPTS:
+
+document.getElementById('editResponseLengthPrompt').addEventListener('click', () => {
+    const prompts = loadResponseLengthPrompts();
+    console.log('Loaded response length prompts:', prompts);
+    let html = '';
+    prompts.forEach((prompt, idx) => {
+        const label = responseLengthOptions && responseLengthOptions[idx] ? responseLengthOptions[idx] : `Preset ${idx}`;
+        html += `
+            <div class="form-group">
+                <label>${label}:</label>
+                <input type="text" class="form-control response-length-input" data-idx="${idx}" value="${prompt}">
+            </div>
+        `;
+    });
+    document.getElementById('responseLengthModalBody').innerHTML = html;
+    $('#responseLengthModal').modal('show');
+});
+
+document.getElementById('saveResponseLengthBtn').onclick = () => {
+    const inputs = document.querySelectorAll('.response-length-input');
+    const prompts = Array.from(inputs).map(input => input.value);
+    saveResponseLengthPrompts(prompts);
+    $('#responseLengthModal').modal('hide');
+};
+
+document.getElementById('resetResponseLengthBtn').onclick = () => {
+    const prompts = [...defaultResponseLengthPresets];
+    document.querySelectorAll('.response-length-input').forEach((input, idx) => {
+        input.value = prompts[idx];
+    });
+};
+
+// EDIT AVATAR PROMPT:
+
+document.getElementById('editAvatarPrompt').addEventListener('click', () => {
+    document.getElementById('avatarPromptInput').value = loadEmoticonInstruction();
+    $('#avatarPromptModal').modal('show');
+});
+
+document.getElementById('saveAvatarPromptBtn').onclick = () => {
+    const newPrompt = document.getElementById('avatarPromptInput').value;
+    saveEmoticonInstruction(newPrompt);
+    emoticonInstruction = newPrompt;
+    $('#avatarPromptModal').modal('hide');
+};
+
+document.getElementById('resetAvatarPromptBtn').onclick = () => {
+    document.getElementById('avatarPromptInput').value = defaultEmoticonInstruction;
+};
+
+
+/**
+ * Loads the response length prompts from localStorage or returns defaults.
+ * Ensures the returned array is valid and matches the expected length.
+ * @returns {string[]} Array of response length prompt strings.
+ */
+
+function loadResponseLengthPrompts() {
+    const stored = localStorage.getItem('bubbleai_response_length_prompts');
+    if (stored) {
+        try {
+            const arr = JSON.parse(stored);
+            // If not an array or empty, fallback to defaults
+            if (!Array.isArray(arr) || arr.length !== defaultResponseLengthPresets.length) {
+                return [...defaultResponseLengthPresets];
+            }
+            return arr;
+        } catch {
+            return [...defaultResponseLengthPresets];
+        }
+    }
+    return [...defaultResponseLengthPresets];
+}
+
+/**
+ * Loads the avatar/emoticon instruction prompt from localStorage or returns the default.
+ * @returns {string} The avatar prompt string.
+ */
+function loadEmoticonInstruction() {
+    return localStorage.getItem('bubbleai_emoticon_prompt') || defaultEmoticonInstruction;
+}
+
+/**
+ * Saves the response length prompts to localStorage.
+ * @param {string[]} prompts - Array of prompt strings to save.
+ */
+function saveResponseLengthPrompts(prompts) {
+    localStorage.setItem('bubbleai_response_length_prompts', JSON.stringify(prompts));
+}
+
+/**
+ * Saves the avatar/emoticon instruction prompt to localStorage.
+ * @param {string} prompt - The prompt string to save.
+ */
+function saveEmoticonInstruction(prompt) {
+    localStorage.setItem('bubbleai_emoticon_prompt', prompt);
+}
+
+
+// Handler for edit icon response Length prompts
 
 /**
  * Displays a single message bubble in the chat
