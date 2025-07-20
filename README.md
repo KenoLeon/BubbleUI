@@ -1,13 +1,9 @@
+
 # Bubble UI
 
-Bubble UI is an experimental, local-first chat interface for LLMs, Gemini for now, designed to explore new patterns in prompt management, context injection, and multi-conversation workflows. It’s a hands-on playground for AI developers and enthusiasts to experiment with advanced chat UI features, context management, and persistent local storage—all in the browser.
+ - Bubble UI is an experimental, local-first chat interface for LLMs (currently Gemini), designed to explore new patterns in prompt management, context injection, and multi-conversation workflows. It’s a hands-on playground for AI developers and enthusiasts to experiment with advanced chat UI features, context management, and persistent local storage—all in the browser. Some UI elements and features may be experimental or subject to change, and not all controls are guaranteed to work perfectly in every scenario. This is an active area of development—feedback and contributions are welcome!
 
-## About This Project
 
-**Bubble UI is an experimental and evolving project.**  
-It explores new patterns for local-first, context-rich AI chat interfaces.  
-Some UI elements and features may be experimental or subject to change, and not all controls are guaranteed to work perfectly in every scenario.  
-This is an active area of development—feedback and contributions are welcome!
 
 ---
 [**Live Demo on GitHub Pages**](https://kenoleon.github.io/BubbleUI/)  
@@ -17,7 +13,8 @@ This is an active area of development—feedback and contributions are welcome!
 
 ## Features 
 
-- **Response length control** (slider) Adjust the length of the AI’s Response, change the prompt/slider for other AI driven UI functions.
+- **Prompt-based UI controls:** Easily adjust how the AI responds by editing the underlying prompts for features like response length, avatar/emoticon behavior, and more—all directly from the interface. Users can customize or restore defaults for each prompt-driven feature.
+
 
 ![Response Length Control Demo](https://raw.githubusercontent.com/KenoLeon/BubbleUI/main/docs/BubbleUI_Resp.png)
 
