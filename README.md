@@ -11,12 +11,13 @@
 
 ---
 
+![Response Length Control Demo](https://raw.githubusercontent.com/KenoLeon/BubbleUI/main/docs/BubbleUI_Resp.png)
+
 ## Features 
 
-- **Prompt-based UI controls:** Easily adjust how the AI responds by editing the underlying prompts for features like response length, avatar/emoticon behavior, and more—all directly from the interface. Users can customize or restore defaults for each prompt-driven feature.
+- **Prompt-based UI controls:** Adjust how the AI responds by editing the underlying prompts for features like response length, avatar/emoticon behavior directly from the interface. Users can customize or restore defaults for each prompt-driven feature.
 
-
-![Response Length Control Demo](https://raw.githubusercontent.com/KenoLeon/BubbleUI/main/docs/BubbleUI_Resp.png)
+![Edit Prompt based UI ](https://raw.githubusercontent.com/KenoLeon/BubbleUI/main/docs/BubbleUI_EditUI_Prompt.png)
 
 - **Multi-conversation**: Save, rename, and switch between chats
 - **Context management**: Add, edit, and activate context snippets for better responses
