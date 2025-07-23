@@ -440,7 +440,33 @@ button,
   transition: width 0.3s;
 }
 
+.model-dropdown-item {
+  white-space: normal;
+  font-size: 0.95em !important;
+  line-height: 1.2;
+  min-height: 2.5em;
+  padding-top: 0.6em;
+  padding-bottom: 0.6em;
+}
 
+#modelDropdownBtn {
+  text-align: left;
+  font-size: 0.95em !important;
+  line-height: 1.2;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  min-height: 2.5em;
+  white-space: normal;
+}
+
+#currentModelLabel {
+  display: block;
+  white-space: normal;
+  font-size: 0.95em !important;
+  font-weight: 400;
+  line-height: 1.2;
+  text-align: left;
+}
 
 /* LOADING */
 

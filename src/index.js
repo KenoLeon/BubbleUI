@@ -1,9 +1,13 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
-
+// import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 import { marked } from "marked";
 import hljs from "highlight.js";
+import { SUPPORTED_MODELS, getDefaultModel, getModelById } from './models.js';
 
 let ai = null;
+
+let selectedModelId = localStorage.getItem('bubbleai_selected_model') || getDefaultModel().id;
+let selectedModel = getModelById(selectedModelId);
 const textArea = document.getElementById('textArea');
 const sendBtn = document.getElementById('sendBtn');
 let tabHeld = false;
@@ -137,20 +141,20 @@ document.getElementById('saveApiKeyBtn').addEventListener('click', () => {
         setApiKey(key);
         $('#apiKeyModal').modal('hide');
         updateApiKeyStatus();
-        initializeGemini();
+        initializeModel(selectedModel);
     }
 });
 
-/**
-* Initializes the Google Generative AI instance with the stored API key.
-* Creates a new GoogleGenerativeAI object if a valid key is available.
-*/
-function initializeGemini() {
+
+function initializeModel(selectedModel) {
     const key = getApiKey();
     if (key) {
-        ai = new GoogleGenerativeAI(key);
+        ai = new GoogleGenAI({ apiKey: key });
     }
+    document.getElementById('currentModelLabel').textContent = `Model: ${selectedModel.name}`;
 }
+
+
 
 // LOCAL STORAGE:
 
@@ -733,7 +737,7 @@ function updatePromptPosition() {
 document.getElementById('viewChatMemoryBtn').addEventListener('click', () => {
     // Build the chat memory string (same as used for prompt)
     const chatMemory = buildChatHistoryString(chatHistory);
-    const note = "Note: Context is not saved as part of the chat history. The context(s) active during each message are not recorded.\n\n";
+    const note = "Note: Context and Model version are not saved as part of the chat history. The context(s) active during each message and model version are not recorded.\n\n";
     document.getElementById('chatMemoryContent').textContent = note + (chatMemory || "(No chat memory yet)");
     $('#chatMemoryModal').modal('show');
 });
@@ -869,8 +873,9 @@ sendBtn.addEventListener('click', async () => {
 
     // 7. Call the model and handle the response
     try {
-        const model = ai.getGenerativeModel({ model: "gemini-2.0-flash" });
-        const result = await model.generateContent(fullPrompt);
+        
+        const apiParams = selectedModel.getApiParams(fullPrompt);
+        const result = await ai.models.generateContent(apiParams);
         removePromptLoadingBubble();
 
         // Unmark pending for the last user prompt
@@ -883,7 +888,7 @@ sendBtn.addEventListener('click', async () => {
 
         // Add the LLM response and re-render
         // Parse emoticon and answer from LLM response
-        const rawResponse = result.response.text();
+        const rawResponse = result.text;
         let emoticon = ':|';
         let answer = rawResponse;
 
@@ -1172,6 +1177,37 @@ function displayMessage(message, sender, chat, pending = false) {
     chat.appendChild(msgDiv);
 }
 
+// Populate dropdown
+function renderModelDropdown() {
+    const menu = document.getElementById('modelDropdownMenu');
+    menu.innerHTML = SUPPORTED_MODELS.map(model => `
+    <li>
+        <a class="dropdown-item model-dropdown-item${model.id === selectedModelId ? ' active' : ''}" 
+        href="#" data-model-id="${model.id}" 
+        style="white-space:normal; font-size:1em; line-height:1.2; padding-top:0.6em; padding-bottom:0.6em;">
+        ${model.name}
+        </a>
+    </li>
+`).join('');
+    document.getElementById('currentModelLabel').textContent = `${selectedModel.name}`;
+}
+
+// Handle selection
+document.getElementById('modelDropdownMenu').addEventListener('click', (e) => {
+    const item = e.target.closest('a[data-model-id]');
+    if (!item) return;
+    const modelId = item.getAttribute('data-model-id');
+    if (modelId !== selectedModelId) {
+        selectedModelId = modelId;
+        selectedModel = getModelById(modelId);
+        localStorage.setItem('bubbleai_selected_model', modelId);
+        renderModelDropdown();
+        // Re-initialize backend logic here if needed:
+        initializeModel(selectedModel);
+    }
+});
+
+
 document.getElementById('markdownToggle').addEventListener('change', () => {
     renderChatHistory();
     updateBubblesColWidth();
@@ -1181,9 +1217,10 @@ document.getElementById('toggleAvatar').addEventListener('change', () => {
     renderChatHistory();
 });
 
+
 document.addEventListener('DOMContentLoaded', function () {
     updateApiKeyStatus();
-    initializeGemini();
+    initializeModel(selectedModel);
     updateSendBtn();
     renderChatHistory();
     updatePromptPosition();
@@ -1191,5 +1228,6 @@ document.addEventListener('DOMContentLoaded', function () {
     renderChatList();    
     updateStorageMeter();
     updateBubblesColWidth();
+    renderModelDropdown();
 });
 

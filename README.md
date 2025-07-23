@@ -13,7 +13,21 @@
 
 ![Response Length Control Demo](https://raw.githubusercontent.com/KenoLeon/BubbleUI/main/docs/BubbleUI_Resp.png)
 
-## Features 
+## Features
+
+
+### Model Switching
+
+- **Easy model selection:**  
+  Choose your preferred Gemini model and variant (e.g., "thinking" or "no thinking" for Gemini 2.5 Flash) from a dropdown above the API key section.  
+  The UI updates instantly and all requests use your selected model.
+
+  ![Select Model ](https://raw.githubusercontent.com/KenoLeon/BubbleUI/main/docs/BubbleUI_ModelSelection.png)
+
+- **Adapters for future providers:**  
+  The codebase is ready to support other LLM providers (OpenAI, Claude, etc.)—just add new models in `src/models.js`.
+
+
 
 - **Prompt-based UI controls:** Adjust how the AI responds by editing the underlying prompts for features like response length, avatar/emoticon behavior directly from the interface. Users can customize or restore defaults for each prompt-driven feature.
 
@@ -40,9 +54,11 @@ And ask the AI to prioritize (Note the context markers on top of the prompt area
 
 ![Other features](https://raw.githubusercontent.com/KenoLeon/BubbleUI/main/docs/BubbleUI_Code.png)
 
-> **Note:**  
-> Bubble UI uses the `"gemini-2.0-flash"` model by default for responses.  
-> You can change the model in the source code (`src/index.js`) if you want to use a different Gemini or LLM model.
+
+> **Note:**
+> Bubble UI lets you select from multiple Gemini models (including Gemini 2.0  Flash, Gemini 2.5 Flash, and Gemini 2.5 Pro) directly from the UI.
+> You can also choose between "thinking" and "no thinking" variants for supported models.
+
 
 ---
 
@@ -113,7 +129,8 @@ MIT
 Based on community feedback and our roadmap, here are planned features for future releases:
 
 ### v2.0 Roadmap
-- **Multiple LLM provider support** (OpenAI, Claude, etc.)/ Model Abstraction.
+- **Multiple LLM provider support** (OpenAI, Claude, etc.)/ Model Abstraction.  
+  _Adapters for model-specific options are already implemented for Gemini models._
 - **Advanced context management** context drawer, contextualize chat, ~~context indicators~~.
 - **Export/import functionality** for chats and contexts
 - **IndexedDB migration** for better performance with large datasets

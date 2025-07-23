@@ -113,9 +113,18 @@
                         <div class="storage-meter-bar-bg">
                             <div id="storageMeterBar" class="storage-meter-bar"></div>
                         </div>
-                    </div>
-
-                    <div id="apiKeyStatus" class="alert alert-warning p-2 my-2" style="font-size:0.95em;">
+                        </div>
+                        
+                        <div class="dropdown my-2">
+                            <button class="btn btn-info dropdown-toggle w-100" type="button" id="modelDropdownBtn" data-toggle="dropdown"
+                                aria-expanded="false">
+                                <span id="currentModelLabel"></span>
+                            </button>
+                            <ul class="dropdown-menu w-100" aria-labelledby="modelDropdownBtn" id="modelDropdownMenu">
+                                <!-- Model options will be injected here -->
+                            </ul>
+                        </div>
+                        <div id="apiKeyStatus" class="alert alert-warning p-2 my-2" style="font-size:0.95em;">
                         No Gemini API key set.
                         <button class="btn btn-link btn-sm p-0" id="setApiKeyBtn">(Set Key)</button>
                     </div>
@@ -304,11 +313,10 @@
             </div>
         </div>
 
-
-
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
 </body>
 
 </html>
