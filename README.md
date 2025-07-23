@@ -22,7 +22,7 @@
   Choose your preferred Gemini model and variant (e.g., "thinking" or "no thinking" for Gemini 2.5 Flash) from a dropdown above the API key section.  
   The UI updates instantly and all requests use your selected model.
 
-  ![Select Model ](https://raw.githubusercontent.com/KenoLeon/BubbleUI/main/docs/BubbleUI_ModelSelection.png)
+  <img src="https://raw.githubusercontent.com/KenoLeon/BubbleUI/main/docs/BubbleUI_ModelSelection.png" alt="Select Model" width="400" />
 
 - **Adapters for future providers:**  
   The codebase is ready to support other LLM providers (OpenAI, Claude, etc.)—just add new models in `src/models.js`.
