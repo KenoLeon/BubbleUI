@@ -6,10 +6,13 @@
 
 
 ---
-[**Live Demo on GitHub Pages**](https://kenoleon.github.io/BubbleUI/)  
-[**Source Code**](https://github.com/KenoLeon/BubbleUI)
-
+● [**Live Demo on GitHub Pages**](https://kenoleon.github.io/BubbleUI/) ☜
 ---
+
+<br>
+
+
+
 
 ![Response Length Control Demo](https://raw.githubusercontent.com/KenoLeon/BubbleUI/main/docs/BubbleUI_Resp.png)
 
@@ -22,7 +25,7 @@
   Choose your preferred Gemini model and variant (e.g., "thinking" or "no thinking" for Gemini 2.5 Flash) from a dropdown above the API key section.  
   The UI updates instantly and all requests use your selected model.
 
-  <img src="https://raw.githubusercontent.com/KenoLeon/BubbleUI/main/docs/BubbleUI_ModelSelection.png" alt="Select Model" width="260" />
+  <img src="https://raw.githubusercontent.com/KenoLeon/BubbleUI/main/docs/BubbleUI_ModelSelection.png" alt="Select Model" width="200" />
 
 - **Adapters for future providers:**  
   The codebase is ready to support other LLM providers (OpenAI, Claude, etc.)—just add new models in `src/models.js`.
