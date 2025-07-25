@@ -31,13 +31,11 @@
 - **Adapters for future providers:**  
   The codebase is ready to support other LLM providers (OpenAI, Claude, etc.)—just add new models in `src/models.js`.
 
-
-
 - **Prompt-based UI controls:** Adjust how the AI responds by editing the underlying prompts for features like response length, avatar/emoticon behavior directly from the interface. Users can customize or restore defaults for each prompt-driven feature.
 
 ![Edit Prompt based UI ](https://raw.githubusercontent.com/KenoLeon/BubbleUI/main/docs/BubbleUI_EditUI_Prompt.png)
 
-- **Multi-conversation**: Save, rename, and switch between chats
+- **Multi-conversation**: Save, rename,and switch between chats
 - **Context management**: Add, edit, and activate context snippets for better responses
 
 #### EXAMPLE:
@@ -52,9 +50,14 @@ And ask the AI to prioritize (Note the context markers on top of the prompt area
 
 > The green bars above the prompt area indicate how many contexts are currently active.
 
+<br>
+
+- **Export all chats, contexts, and prompts** with one click
 - **Markdown & code highlighting** in responses
 - **Chat width adjustment** (slider)
 - **Prompt position & sort order toggles**
+
+<br>
 
 ![Other features](https://raw.githubusercontent.com/KenoLeon/BubbleUI/main/docs/BubbleUI_Code.png)
 
@@ -136,7 +139,7 @@ Based on community feedback and our roadmap, here are planned features for futur
 - **Multiple LLM provider support** (OpenAI, Claude, etc.)/ Model Abstraction.  
   _Adapters for model-specific options are already implemented for Gemini models._
 - **Advanced context management** context drawer, contextualize chat, ~~context indicators~~.
-- **Export/import functionality** for chats and contexts
+- ~~Export~~ **Import functionality** for chats and contexts 
 - **IndexedDB migration** for better performance with large datasets
 - **Mobile-first responsive design** improvements
 - **Prompt Area enhancements** 

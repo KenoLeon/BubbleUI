@@ -1218,6 +1218,40 @@ document.getElementById('toggleAvatar').addEventListener('change', () => {
 });
 
 
+/**
+ * Exports all app data (chats, contexts, response length prompts, emoticon prompt) as a single JSON file.
+ * Reads from localStorage and triggers a download of bubbleui_data.json.
+ * Useful for backup, migration, or sharing app state.
+ */
+
+document.getElementById('exportDataBtn').addEventListener('click', () => {
+    const chats = JSON.parse(localStorage.getItem('bubbleai_chats') || '[]');
+    const contexts = JSON.parse(localStorage.getItem('bubbleai_contexts') || '[]');
+    const responseLengthPrompts = JSON.parse(localStorage.getItem('bubbleai_response_length_prompts') || 'null');
+    const emoticonPrompt = localStorage.getItem('bubbleai_emoticon_prompt') || null;
+
+    const exportObj = {
+        chats,
+        contexts,
+        responseLengthPrompts,
+        emoticonPrompt
+    };
+
+    const blob = new Blob([JSON.stringify(exportObj, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "bubbleui_data.json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+});
+
+
+
+
+
 document.addEventListener('DOMContentLoaded', function () {
     updateApiKeyStatus();
     initializeModel(selectedModel);
