@@ -1,16 +1,15 @@
-// import { GoogleGenerativeAI } from "@google/generative-ai";
 import { GoogleGenAI } from "@google/genai";
 import { marked } from "marked";
 import hljs from "highlight.js";
 import { SUPPORTED_MODELS, getDefaultModel, getModelById } from './models.js';
 
 let ai = null;
-
+let autosavedChatId = null;
 let selectedModelId = localStorage.getItem('bubbleai_selected_model') || getDefaultModel().id;
 let selectedModel = getModelById(selectedModelId);
+let tabHeld = false;
 const textArea = document.getElementById('textArea');
 const sendBtn = document.getElementById('sendBtn');
-let tabHeld = false;
 const responseLengthOptions = ['Default', 'Short', 'Medium', 'Long', 'Full'];
 const responseLength = document.getElementById('responseLength');
 const responseLengthLabel = document.getElementById('responseLengthLabel');
@@ -242,6 +241,7 @@ document.getElementById('clearAppDataBtn').addEventListener('click', clearAppSto
 
 // HELPER FUNCTIONS:
 
+
 /**
  * Changes the chat sort order and updates the UI
  * @param {string} newOrder - Either 'recent' or 'oldest'
@@ -317,6 +317,7 @@ function saveCurrentChat() {
     chats.push({
         id,
         name,
+        color: '#626262ff',
         history: JSON.parse(JSON.stringify(chatHistory)),
         created: new Date().toISOString(),
         chatWidth: chatWidthSlider.value // Save current width
@@ -341,17 +342,35 @@ function renderChatList() {
     let chats = JSON.parse(localStorage.getItem('bubbleai_chats') || '[]');
     chats.forEach((chat, idx) => {
         const wrapper = document.createElement('div');
-        wrapper.className = 'd-flex align-items-center mb-1';
+        wrapper.className = 'd-flex align-items-center mb-1 chat-list-row';
+
+        // Color bar
+        const colorBar = document.createElement('span');
+        colorBar.className = 'chat-color-bar';
+        colorBar.style.background = chat.color || '#e0e0e0';
 
         // Chat select button
         const btn = document.createElement('button');
         btn.className = 'btn btn-block btn-sm text-left chat-list-btn flex-grow-1';
         btn.textContent = chat.name || `Chat ${idx + 1}`;
         btn.title = `Saved: ${chat.created ? new Date(chat.created).toLocaleString() : ''}`;
+
+        // Neutral background, border for active
+        btn.style.background = '';
+        btn.style.border = (chat.id === activeChatId)
+            ? `2px solid ${chat.color || '#e0e0e0'}`
+            : '1px solid #bfc4cc';
+        btn.style.boxShadow = (chat.id === activeChatId)
+            ? `0 0 0 2px ${chat.color || '#e0e0e0'}33`
+            : 'none';
+
         if (chat.id === activeChatId) {
             btn.classList.add('active');
+            btn.style.setProperty('--chat-active-border', chat.color || '#bfc4cc');
+        } else {
+            btn.classList.remove('active');
+            btn.style.removeProperty('--chat-active-border');
         }
-
 
         btn.onclick = () => {
             loadChat(idx);
@@ -370,13 +389,14 @@ function renderChatList() {
         // Edit (rename) button
         const editBtn = document.createElement('button');
         editBtn.className = 'icon-btn';
-        editBtn.title = 'Rename this chat';
+        editBtn.title = 'Edit name and color';
         editBtn.innerHTML = '<i class="bi bi-pencil"></i>';
         editBtn.onclick = (e) => {
             e.stopPropagation();
-            renameChat(idx);
+            openEditChatModal(idx);
         };
 
+        wrapper.appendChild(colorBar);
         wrapper.appendChild(btn);
         wrapper.appendChild(editBtn);
         wrapper.appendChild(deleteBtn);
@@ -431,6 +451,28 @@ function deleteChat(idx) {
 }
 
 /**
+ * Opens the edit chat modal for renaming and color selection.
+ * @param {number} idx - Index of the chat to edit.
+ */
+function openEditChatModal(idx) {
+    let chats = JSON.parse(localStorage.getItem('bubbleai_chats') || '[]');
+    if (!chats[idx]) return;
+    document.getElementById('editChatNameInput').value = chats[idx].name || `Chat ${idx + 1}`;
+    document.getElementById('chatColorInput').value = chats[idx].color || '#e0e0e0';
+
+    $('#editChatModal').modal('show');
+
+    document.getElementById('saveEditChatBtn').onclick = function() {
+        const newName = document.getElementById('editChatNameInput').value.trim();
+        if (newName) chats[idx].name = newName;
+        chats[idx].color = document.getElementById('chatColorInput').value;
+        localStorage.setItem('bubbleai_chats', JSON.stringify(chats));
+        renderChatList();
+        $('#editChatModal').modal('hide');
+    };
+}
+
+/**
  * Updates the currently active chat in localStorage
  * Saves the current chat history to the active chat
  */
@@ -450,18 +492,22 @@ function updateActiveChatInStorage() {
  * @param {number} idx - Index of the chat to rename
  * Prompts user for new name and updates localStorage
  */
-function renameChat(idx) {
-    let chats = JSON.parse(localStorage.getItem('bubbleai_chats') || '[]');
-    if (!chats[idx]) return;
-    const newName = prompt('Rename chat:', chats[idx].name || `Chat ${idx + 1}`);
-    if (newName && newName.trim()) {
-        chats[idx].name = newName.trim();
-        localStorage.setItem('bubbleai_chats', JSON.stringify(chats));
-        renderChatList();
-    }
-}
+
+// function renameChat(idx) {
+//     let chats = JSON.parse(localStorage.getItem('bubbleai_chats') || '[]');
+//     if (!chats[idx]) return;
+//     const newName = prompt('Rename chat:', chats[idx].name || `Chat ${idx + 1}`);
+//     if (newName && newName.trim()) {
+//         chats[idx].name = newName.trim();
+//         localStorage.setItem('bubbleai_chats', JSON.stringify(chats));
+//         renderChatList();
+//     }
+// }
+
 
 document.getElementById('addChatBtn').addEventListener('click', () => {
+    autosavedChatId = null;
+    activeChatId = null;
     chatHistory = [];
     activeChatId = null;
     contexts.forEach(ctx => ctx.active = false);
@@ -611,7 +657,7 @@ function renderContextList() {
         // Context label
         const label = document.createElement('span');
         label.textContent = ctx.title || `Context ${idx + 1}`;
-        label.className = 'flex-grow-1 context-title' + (ctx.active ? ' active' : '');
+        label.className = 'flex-grow-1 context-title context-list-btn' + (ctx.active ? ' active' : '');
 
         // Inspect icon button
         const inspectBtn = document.createElement('button');
@@ -907,6 +953,26 @@ sendBtn.addEventListener('click', async () => {
         updateBubblesColWidth();
         updateActiveChatInStorage();
 
+        // AUTOSAVE LOGIC: Save chat on first LLM response if autosave is enabled and no chat is active
+        const autosaveEnabled = document.getElementById('autosaveChatToggle')?.checked;
+        if (autosaveEnabled && !activeChatId && !autosavedChatId) {
+            let chats = JSON.parse(localStorage.getItem('bubbleai_chats') || '[]');
+            const id = Date.now();
+            chats.push({
+                id,
+                name: `Chat ${chats.length + 1}`,
+                color: '#626262ff',
+                history: JSON.parse(JSON.stringify(chatHistory)),
+                created: new Date().toISOString(),
+                chatWidth: chatWidthSlider.value
+            });
+            localStorage.setItem('bubbleai_chats', JSON.stringify(chats));
+            updateStorageMeter();
+            activeChatId = id;
+            autosavedChatId = id;
+            renderChatList();
+        }
+
     } catch (e) {
         removePromptLoadingBubble();
 
@@ -1177,7 +1243,9 @@ function displayMessage(message, sender, chat, pending = false) {
     chat.appendChild(msgDiv);
 }
 
-// Populate dropdown
+/**
+ * Renders the model dropdown menu in the UI.
+ */
 function renderModelDropdown() {
     const menu = document.getElementById('modelDropdownMenu');
     menu.innerHTML = SUPPORTED_MODELS.map(model => `
@@ -1216,6 +1284,31 @@ document.getElementById('markdownToggle').addEventListener('change', () => {
 document.getElementById('toggleAvatar').addEventListener('change', () => {
     renderChatHistory();
 });
+
+/**
+ * Toggles the sidebar open/closed and updates the UI.
+ */
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const mainArea = document.querySelector('.main-area');
+  const toggleBtn = document.getElementById('toggleSidebarBtn');
+  sidebar.classList.toggle('sidebar-hidden');
+  mainArea.classList.toggle('sidebar-collapsed');
+
+  // Optionally flip the arrow icon
+  const icon = toggleBtn.querySelector('i');
+  if (sidebar.classList.contains('sidebar-hidden')) {
+    icon.classList.remove('bi-arrow-left');
+    icon.classList.add('bi-arrow-right');
+    toggleBtn.title = "Show sidebar";
+  } else {
+    icon.classList.remove('bi-arrow-right');
+    icon.classList.add('bi-arrow-left');
+    toggleBtn.title = "Hide sidebar";
+  }
+}
+
+document.getElementById('toggleSidebarBtn').addEventListener('click', toggleSidebar);
 
 
 /**

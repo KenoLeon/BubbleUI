@@ -15,7 +15,20 @@
 
 
 
-![Response Length Control Demo](https://raw.githubusercontent.com/KenoLeon/BubbleUI/main/docs/BubbleUI_Resp.png)
+![Bubble UI demo image](https://raw.githubusercontent.com/KenoLeon/BubbleUI/main/docs/BubbleUI_MainDemo.png)
+
+
+## What's New !
+
+- **Autosave Chat History Option:**  
+  Chats can now be automatically saved upon a succesful prompt answer, setting can be toggled.
+
+- **Sliding Sidebar:**  
+  The sidebar can be toggled open or closed.
+
+- **Color Code Chats:**  
+  Assign a custom color to each chat, shown as a vertical bar and border in the chat list.
+
 
 ## Features
 

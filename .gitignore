@@ -27,5 +27,6 @@ Thumbs.db
 coverage/
 
 # Misc
+docs/MainDemo.clip
 *.log
 Context_todo.txt
