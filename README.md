@@ -11,23 +11,31 @@
 ---
 
 
-
-
-
+Everything out :
 
 ![Bubble UI demo image](https://raw.githubusercontent.com/KenoLeon/BubbleUI/main/docs/BubbleUI_MainDemo.png)
+
+Or minimal zen :
+
+![Bubble UI demo image](https://raw.githubusercontent.com/KenoLeon/BubbleUI/main/docs/BubbleUI_MainDemoLightMinimal.png)
+
 
 
 ## What's New !
 
-- **Autosave Chat History Option:**  
-  Chats can now be automatically saved upon a succesful prompt answer, setting can be toggled.
+- **Custom API Endpoint & Unsloth Compatibility:**  
+  You can now connect Bubble UI to your own LLM backend or a Colab-hosted Unsloth model via a custom endpoint.  
+  [See "Custom API & Unsloth Integration" below for details.](#custom-api--unsloth-integration)
 
-- **Sliding Sidebar:**  
-  The sidebar can be toggled open or closed.
 
-- **Color Code Chats:**  
-  Assign a custom color to each chat, shown as a vertical bar and border in the chat list.
+- **Collapsible sidebar sections:**  
+  Sidebar is now organized into four main collapsible sections for a cleaner, less cluttered UI.
+
+- **Persistent sidebar state:**  
+  The open/closed state of each sidebar section is saved and restored automatically.
+
+- **Dark/light mode toggle:**  
+  Instantly switch between dark and light themes using a sun/moon icon in the top right. Theme preference is remembered.
 
 
 ## Features
@@ -43,6 +51,29 @@
 
 - **Adapters for future providers:**  
   The codebase is ready to support other LLM providers (OpenAI, Claude, etc.)—just add new models in `src/models.js`.
+
+
+
+## Custom API & Unsloth Integration 
+
+Bubble UI can connect to any compatible LLM backend—including [Unsloth](https://github.com/unslothai/unsloth) models running on Colab—using a simple custom API endpoint.
+
+  
+<img src="https://raw.githubusercontent.com/KenoLeon/BubbleUI/main/docs/BubbleUI_CustomEndpoint.png" alt="Select Model" width="200" />
+
+
+**Quick Start:**
+
+- Open the [Unsloth Inference + Ngrok BubbleUI Colab notebook](notebooks/Unsloth_Inference_Ngrok_BubbleUI.ipynb) and follow the instructions to launch your own endpoint.
+- The notebook uses [ngrok](https://ngrok.com/) to expose your Colab or local server to the internet. You can use a free custom ngrok domain for easy access (see [ngrok custom domains](https://ngrok.com/blog-post/new-ngrok-domains)).
+- Copy the public `/predict` URL shown in the notebook (e.g., `https://your-domain.ngrok-free.app/predict`).
+- In Bubble UI, select "Custom API" and paste your endpoint URL.
+
+That’s it! You can now chat with your own Unsloth model—or any compatible LLM backend—directly from Bubble UI.
+
+> Bubble UI supports any endpoint that accepts a POST to `/predict` with a JSON body `{ "prompt": "..." }` and returns `{ "response": "..." }`.  
+> This includes local servers, Colab notebooks, Hugging Face Spaces, or your own cloud API.
+
 
 - **Prompt-based UI controls:** Adjust how the AI responds by editing the underlying prompts for features like response length, avatar/emoticon behavior directly from the interface. Users can customize or restore defaults for each prompt-driven feature.
 
@@ -65,6 +96,9 @@ And ask the AI to prioritize (Note the context markers on top of the prompt area
 
 <br>
 
+- **Autosave chat history** with a single toggle
+- **Sliding sidebar** for a cleaner workspace
+- **Color-coded chats** for easy visual organization
 - **Export all chats, contexts, and prompts** with one click
 - **Markdown & code highlighting** in responses
 - **Chat width adjustment** (slider)

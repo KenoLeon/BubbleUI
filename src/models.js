@@ -1,3 +1,16 @@
+export const SUPPORTED_PROVIDERS = [
+  {
+    id: "gemini",
+    name: "Gemini (Google)",
+    style: "success" // for btn-success
+  },
+  {
+    id: "custom",
+    name: "Custom API Endpoint",
+    style: "secondary" // for btn-secondary or your choice
+  }
+];
+
 export const SUPPORTED_MODELS = [
   {
     id: "gemini-2.0-flash",

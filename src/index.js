@@ -1,7 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 import { marked } from "marked";
 import hljs from "highlight.js";
-import { SUPPORTED_MODELS, getDefaultModel, getModelById } from './models.js';
+import { SUPPORTED_MODELS, SUPPORTED_PROVIDERS, getDefaultModel, getModelById } from './models.js';
 
 let ai = null;
 let autosavedChatId = null;
@@ -29,7 +29,7 @@ const defaultResponseLengthPresets = [
 ];
 
 const defaultEmoticonInstruction =
-  "Start your response with your emoticon, text emoji or plain text  (max 5 characters), then a space, then your answer.";
+    "Start your response with your emoticon, text emoji or plain text  (max 5 characters), then a space, then your answer.";
 
 let emoticonInstruction = loadEmoticonInstruction();
 
@@ -41,16 +41,20 @@ let chatHistory = [];
 let activeChatId = null;
 
 
-
-document.getElementById('darkModeToggle').addEventListener('change', function() {
-    document.body.classList.toggle('dark-theme', this.checked);    
-    localStorage.setItem('bubbleai_dark_mode', this.checked ? '1' : '0');
+document.getElementById('darkModeIconBtn').addEventListener('click', function () {
+    document.body.classList.toggle('dark-theme');
+    const isDark = document.body.classList.contains('dark-theme');
+    localStorage.setItem('bubbleai_dark_mode', isDark ? '1' : '0');
+    document.getElementById('darkModeIcon').className = isDark ? 'bi bi-sun' : 'bi bi-moon';
 });
 
-if (localStorage.getItem('bubbleai_dark_mode') === '1') {
-    document.getElementById('darkModeToggle').checked = true;
-    document.body.classList.add('dark-theme');
-}
+// On load, set icon state
+document.addEventListener('DOMContentLoaded', function () {
+    const isDark = localStorage.getItem('bubbleai_dark_mode') === '1';
+    if (isDark) document.body.classList.add('dark-theme');
+    document.getElementById('darkModeIcon').className = isDark ? 'bi bi-sun' : 'bi bi-moon';
+});
+
 
 marked.setOptions({
     highlight: function (code, lang) {
@@ -197,8 +201,8 @@ function updateStorageMeter() {
     // Optional: change color if near full
     document.getElementById('storageMeterBar').style.background =
         percent > 90 ? 'linear-gradient(90deg, #EA885B, #D6AD5C)' :
-        percent > 70 ? 'linear-gradient(90deg, #D6AD5C, #EA885B)' :
-        'linear-gradient(90deg, #bfc4cc, #9cacbe)';
+            percent > 70 ? 'linear-gradient(90deg, #D6AD5C, #EA885B)' :
+                'linear-gradient(90deg, #bfc4cc, #9cacbe)';
 }
 
 /**
@@ -462,7 +466,7 @@ function openEditChatModal(idx) {
 
     $('#editChatModal').modal('show');
 
-    document.getElementById('saveEditChatBtn').onclick = function() {
+    document.getElementById('saveEditChatBtn').onclick = function () {
         const newName = document.getElementById('editChatNameInput').value.trim();
         if (newName) chats[idx].name = newName;
         chats[idx].color = document.getElementById('chatColorInput').value;
@@ -487,23 +491,6 @@ function updateActiveChatInStorage() {
     }
 }
 
-/**
- * Renames a saved chat
- * @param {number} idx - Index of the chat to rename
- * Prompts user for new name and updates localStorage
- */
-
-// function renameChat(idx) {
-//     let chats = JSON.parse(localStorage.getItem('bubbleai_chats') || '[]');
-//     if (!chats[idx]) return;
-//     const newName = prompt('Rename chat:', chats[idx].name || `Chat ${idx + 1}`);
-//     if (newName && newName.trim()) {
-//         chats[idx].name = newName.trim();
-//         localStorage.setItem('bubbleai_chats', JSON.stringify(chats));
-//         renderChatList();
-//     }
-// }
-
 
 document.getElementById('addChatBtn').addEventListener('click', () => {
     autosavedChatId = null;
@@ -515,7 +502,7 @@ document.getElementById('addChatBtn').addEventListener('click', () => {
     renderContextList();
 
     // Set default width for new chat
-    const defaultWidth = 80;
+    const defaultWidth = 90;
     chatWidthSlider.value = defaultWidth;
     chatWidthLabel.textContent = defaultWidth + '%';
 
@@ -579,7 +566,7 @@ chatWidthSlider.addEventListener('input', updateBubblesColWidth);
 
 // Update after chat renders
 const origRenderChatHistory = renderChatHistory;
-window.renderChatHistory = function() {
+window.renderChatHistory = function () {
     origRenderChatHistory.apply(this, arguments);
     updateBubblesColWidth();
 };
@@ -748,7 +735,7 @@ function updatePromptPosition() {
     const parent = chatArea.parentNode;
     const mainCol = document.querySelector('.col-sm-8.p-4');
 
-    
+
     if (promptPosition === 'bottom') {
         parent.appendChild(promptContainer);
         document.getElementById('promptPositionIcon').className = 'bi bi-arrow-up';
@@ -919,58 +906,118 @@ sendBtn.addEventListener('click', async () => {
 
     // 7. Call the model and handle the response
     try {
-        
-        const apiParams = selectedModel.getApiParams(fullPrompt);
-        const result = await ai.models.generateContent(apiParams);
-        removePromptLoadingBubble();
+        if (selectedProviderId === "gemini") {
+            // --- Gemini logic (existing) ---
+            const apiParams = selectedModel.getApiParams(fullPrompt);
+            const result = await ai.models.generateContent(apiParams);
+            removePromptLoadingBubble();
 
-        // Unmark pending for the last user prompt
-        for (let i = chatHistory.length - 1; i >= 0; i--) {
-            if (chatHistory[i].role === 'user' && chatHistory[i].pending) {
-                chatHistory[i].pending = false;
-                break;
+            // Unmark pending for the last user prompt
+            for (let i = chatHistory.length - 1; i >= 0; i--) {
+                if (chatHistory[i].role === 'user' && chatHistory[i].pending) {
+                    chatHistory[i].pending = false;
+                    break;
+                }
             }
-        }
 
-        // Add the LLM response and re-render
-        // Parse emoticon and answer from LLM response
-        const rawResponse = result.text;
-        let emoticon = ':|';
-        let answer = rawResponse;
+            // Parse emoticon and answer from LLM response
+            const rawResponse = result.text;
+            let emoticon = ':|';
+            let answer = rawResponse;
 
-        if (showAvatar) {
-            // Only parse emoticon if avatar is enabled
-            const match = rawResponse.match(/^([^\s]{1,5})\s+(.*)$/s);
-            if (match) {
-                emoticon = match[1];
-                answer = match[2].trim();
+            if (showAvatar) {
+                const match = rawResponse.match(/^([^\s]{1,5})\s+(.*)$/s);
+                if (match) {
+                    emoticon = match[1];
+                    answer = match[2].trim();
+                }
             }
-        }        
 
-        // Store both emoticon and answer in chatHistory
-        chatHistory.push({ role: 'llm', text: answer, emoticon });
-        renderChatHistory();
-        updateBubblesColWidth();
-        updateActiveChatInStorage();
+            chatHistory.push({ role: 'llm', text: answer, emoticon });
+            renderChatHistory();
+            updateBubblesColWidth();
+            updateActiveChatInStorage();
 
-        // AUTOSAVE LOGIC: Save chat on first LLM response if autosave is enabled and no chat is active
-        const autosaveEnabled = document.getElementById('autosaveChatToggle')?.checked;
-        if (autosaveEnabled && !activeChatId && !autosavedChatId) {
-            let chats = JSON.parse(localStorage.getItem('bubbleai_chats') || '[]');
-            const id = Date.now();
-            chats.push({
-                id,
-                name: `Chat ${chats.length + 1}`,
-                color: '#626262ff',
-                history: JSON.parse(JSON.stringify(chatHistory)),
-                created: new Date().toISOString(),
-                chatWidth: chatWidthSlider.value
+            // AUTOSAVE LOGIC (unchanged)
+            const autosaveEnabled = document.getElementById('autosaveChatToggle')?.checked;
+            if (autosaveEnabled && !activeChatId && !autosavedChatId) {
+                let chats = JSON.parse(localStorage.getItem('bubbleai_chats') || '[]');
+                const id = Date.now();
+                chats.push({
+                    id,
+                    name: `Chat ${chats.length + 1}`,
+                    color: '#626262ff',
+                    history: JSON.parse(JSON.stringify(chatHistory)),
+                    created: new Date().toISOString(),
+                    chatWidth: chatWidthSlider.value
+                });
+                localStorage.setItem('bubbleai_chats', JSON.stringify(chats));
+                updateStorageMeter();
+                activeChatId = id;
+                autosavedChatId = id;
+                renderChatList();
+            }
+
+        } else if (selectedProviderId === "custom") {
+            // --- Custom API logic ---
+            const endpoint = localStorage.getItem('bubbleai_custom_api_endpoint');
+            if (!endpoint) throw new Error("No custom API endpoint set.");
+
+            // Send POST request to custom endpoint
+            const response = await fetch(endpoint, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ prompt: fullPrompt })
             });
-            localStorage.setItem('bubbleai_chats', JSON.stringify(chats));
-            updateStorageMeter();
-            activeChatId = id;
-            autosavedChatId = id;
-            renderChatList();
+            removePromptLoadingBubble();
+
+            // Unmark pending for the last user prompt
+            for (let i = chatHistory.length - 1; i >= 0; i--) {
+                if (chatHistory[i].role === 'user' && chatHistory[i].pending) {
+                    chatHistory[i].pending = false;
+                    break;
+                }
+            }
+
+            if (!response.ok) throw new Error("Custom API error: " + response.statusText);
+            const data = await response.json();
+
+            // Use data.response or similar (depends on your API)
+            let answer = data.response || "No response";
+            let emoticon = ':|';
+
+            if (showAvatar) {
+                const match = answer.match(/^([^\s]{1,5})\s+(.*)$/s);
+                if (match) {
+                    emoticon = match[1];
+                    answer = match[2].trim();
+                }
+            }
+
+            chatHistory.push({ role: 'llm', text: answer, emoticon });
+            renderChatHistory();
+            updateBubblesColWidth();
+            updateActiveChatInStorage();
+
+            // AUTOSAVE LOGIC (unchanged)
+            const autosaveEnabled = document.getElementById('autosaveChatToggle')?.checked;
+            if (autosaveEnabled && !activeChatId && !autosavedChatId) {
+                let chats = JSON.parse(localStorage.getItem('bubbleai_chats') || '[]');
+                const id = Date.now();
+                chats.push({
+                    id,
+                    name: `Chat ${chats.length + 1}`,
+                    color: '#626262ff',
+                    history: JSON.parse(JSON.stringify(chatHistory)),
+                    created: new Date().toISOString(),
+                    chatWidth: chatWidthSlider.value
+                });
+                localStorage.setItem('bubbleai_chats', JSON.stringify(chats));
+                updateStorageMeter();
+                activeChatId = id;
+                autosavedChatId = id;
+                renderChatList();
+            }
         }
 
     } catch (e) {
@@ -988,7 +1035,7 @@ sendBtn.addEventListener('click', async () => {
         renderChatHistory();
         updateBubblesColWidth();
         updateActiveChatInStorage();
-    }    
+    }
 });
 
 /**
@@ -1223,7 +1270,7 @@ function displayMessage(message, sender, chat, pending = false) {
     const msgDiv = document.createElement('div');
     msgDiv.className = 'bubble ' + (sender === 'user' ? 'bubble-user' : 'bubble-llm');
 
-    
+
     if (pending) msgDiv.classList.add('bubble-pending');
 
     // Check the markdown toggle
@@ -1243,6 +1290,85 @@ function displayMessage(message, sender, chat, pending = false) {
     chat.appendChild(msgDiv);
 }
 
+
+// MODELS & PROVIDERS
+
+let selectedProviderId = localStorage.getItem('bubbleai_selected_provider') || SUPPORTED_PROVIDERS[0].id;
+let selectedProvider = SUPPORTED_PROVIDERS.find(p => p.id === selectedProviderId) || SUPPORTED_PROVIDERS[0];
+
+/**
+ * Renders the provider dropdown menu in the UI.
+ */
+function renderProviderDropdown() {
+    const menu = document.getElementById('providerDropdownMenu');
+    menu.innerHTML = SUPPORTED_PROVIDERS.map(provider => `
+        <li>
+            <a class="dropdown-item provider-dropdown-item${provider.id === selectedProviderId ? ' active' : ''}" 
+                href="#" data-provider-id="${provider.id}">
+                ${provider.name}
+            </a>
+        </li>
+    `).join('');
+    document.getElementById('currentProviderLabel').textContent = selectedProvider.name;
+}
+
+function updateProviderUI() {
+    if (selectedProviderId === "gemini") {
+        document.getElementById('geminiControls').style.display = '';
+        document.getElementById('customControls').style.display = 'none';
+    } else if (selectedProviderId === "custom") {
+        document.getElementById('geminiControls').style.display = 'none';
+        document.getElementById('customControls').style.display = '';
+        updateCustomApiStatus();
+    }
+}
+
+
+// Handle provider selection
+document.getElementById('providerDropdownMenu').addEventListener('click', (e) => {
+    const item = e.target.closest('a[data-provider-id]');
+    if (!item) return;
+    const providerId = item.getAttribute('data-provider-id');
+    if (providerId !== selectedProviderId) {
+        selectedProviderId = providerId;
+        selectedProvider = SUPPORTED_PROVIDERS.find(p => p.id === providerId) || SUPPORTED_PROVIDERS[0];
+        localStorage.setItem('bubbleai_selected_provider', providerId);
+        renderProviderDropdown();
+        updateProviderUI();
+    }
+});
+
+document.getElementById('saveCustomApiBtn').addEventListener('click', () => {
+    const endpoint = document.getElementById('customApiInput').value.trim();
+    if (endpoint) {
+        localStorage.setItem('bubbleai_custom_api_endpoint', endpoint);
+        $('#customApiModal').modal('hide');
+        updateCustomApiStatus();
+    }
+});
+
+
+function updateCustomApiStatus() {
+    const statusDiv = document.getElementById('customApiStatus');
+    const endpoint = localStorage.getItem('bubbleai_custom_api_endpoint') || '';
+    if (endpoint) {
+        statusDiv.className = "alert alert-success p-2 my-2";
+        statusDiv.innerHTML = `Custom API endpoint set <span style="font-size:0.9em;">(hidden)</span>
+            <button class="btn btn-link btn-sm p-0" id="setCustomApiBtn">(Change)</button>`;
+    } else {
+        statusDiv.className = "alert alert-warning p-2 my-2";
+        statusDiv.innerHTML = `No API endpoint set.
+            <button class="btn btn-link btn-sm p-0" id="setCustomApiBtn">(Set Endpoint)</button>`;
+    }
+    document.getElementById('setCustomApiBtn').onclick = () => {
+        document.getElementById('customApiInput').value = endpoint;
+        $('#customApiModal').modal('show');
+    };
+}
+
+
+
+
 /**
  * Renders the model dropdown menu in the UI.
  */
@@ -1259,6 +1385,8 @@ function renderModelDropdown() {
 `).join('');
     document.getElementById('currentModelLabel').textContent = `${selectedModel.name}`;
 }
+
+
 
 // Handle selection
 document.getElementById('modelDropdownMenu').addEventListener('click', (e) => {
@@ -1289,26 +1417,98 @@ document.getElementById('toggleAvatar').addEventListener('change', () => {
  * Toggles the sidebar open/closed and updates the UI.
  */
 function toggleSidebar() {
-  const sidebar = document.getElementById('sidebar');
-  const mainArea = document.querySelector('.main-area');
-  const toggleBtn = document.getElementById('toggleSidebarBtn');
-  sidebar.classList.toggle('sidebar-hidden');
-  mainArea.classList.toggle('sidebar-collapsed');
+    const sidebar = document.getElementById('sidebar');
+    const mainArea = document.querySelector('.main-area');
+    const toggleBtn = document.getElementById('toggleSidebarBtn');
+    sidebar.classList.toggle('sidebar-hidden');
+    mainArea.classList.toggle('sidebar-collapsed');
 
-  // Optionally flip the arrow icon
-  const icon = toggleBtn.querySelector('i');
-  if (sidebar.classList.contains('sidebar-hidden')) {
-    icon.classList.remove('bi-arrow-left');
-    icon.classList.add('bi-arrow-right');
-    toggleBtn.title = "Show sidebar";
-  } else {
-    icon.classList.remove('bi-arrow-right');
-    icon.classList.add('bi-arrow-left');
-    toggleBtn.title = "Hide sidebar";
-  }
+    // Optionally flip the arrow icon
+    const icon = toggleBtn.querySelector('i');
+    if (sidebar.classList.contains('sidebar-hidden')) {
+        icon.classList.remove('bi-arrow-left');
+        icon.classList.add('bi-arrow-right');
+        toggleBtn.title = "Show sidebar";
+    } else {
+        icon.classList.remove('bi-arrow-right');
+        icon.classList.add('bi-arrow-left');
+        toggleBtn.title = "Hide sidebar";
+    }
 }
 
 document.getElementById('toggleSidebarBtn').addEventListener('click', toggleSidebar);
+
+
+/**
+ * Syncs a collapse arrow with its section.
+ * @param {string} collapseId - The id of the collapsible div (e.g. "#providerSection")
+ * @param {string} arrowSelector - The selector for the arrow span inside the toggle button
+ */
+function syncCollapseArrow(collapseId, arrowSelector) {
+    var $collapse = $(collapseId);
+    var arrow = document.querySelector(arrowSelector);
+    if (!$collapse.length || !arrow) return;
+
+    // Set initial state
+    if ($collapse.hasClass('show')) {
+        arrow.innerHTML = '&#9660;'; // ▼
+    } else {
+        arrow.innerHTML = '&#9654;'; // ▶
+    }
+
+    $collapse.on('show.bs.collapse', function () {
+        arrow.innerHTML = '&#9660;'; // ▼
+    });
+    $collapse.on('hide.bs.collapse', function () {
+        arrow.innerHTML = '&#9654;'; // ▶
+    });
+}
+
+
+function setInitialCollapseState(sectionIds) {
+    sectionIds.forEach(id => {
+        const state = localStorage.getItem('bubbleui_' + id.replace('#', '') + '_open');
+        const el = document.querySelector(id);
+        if (!el) return;
+        if (state === '0') {
+            el.classList.remove('show');
+        } else if (state === '1') {
+            el.classList.add('show');
+        }
+    });
+}
+
+
+function persistCollapseState(sectionId) {
+    const $collapse = $(sectionId);
+    $collapse.on('show.bs.collapse', function () {
+        localStorage.setItem('bubbleui_' + sectionId.replace('#', '') + '_open', '1');
+    });
+    $collapse.on('hide.bs.collapse', function () {
+        localStorage.setItem('bubbleui_' + sectionId.replace('#', '') + '_open', '0');
+    });
+}
+
+function restoreCollapseState(sectionId) {
+    const state = localStorage.getItem('bubbleui_' + sectionId.replace('#', '') + '_open');
+    const $collapse = $(sectionId);
+    if (state === '0') {
+        $collapse.collapse('hide');
+    } else if (state === '1') {
+        $collapse.collapse('show');
+    }
+}
+
+
+function setupSidebarSections(sections) {
+    sections.forEach(({ id, arrowSelector }) => {
+        syncCollapseArrow(id, arrowSelector);
+        restoreCollapseState(id);
+        persistCollapseState(id);
+    });
+}
+
+
 
 
 /**
@@ -1343,18 +1543,31 @@ document.getElementById('exportDataBtn').addEventListener('click', () => {
 
 
 
-
-
 document.addEventListener('DOMContentLoaded', function () {
+    setInitialCollapseState([
+        '#contextSection',
+        '#chatsSection',
+        '#settingsSection',
+        '#providerModelSection'
+    ]);
+    document.getElementById('sidebar').style.visibility = 'visible';
+    setupSidebarSections([
+        { id: '#contextSection', arrowSelector: '[data-target="#contextSection"] .collapse-arrow' },
+        { id: '#chatsSection', arrowSelector: '[data-target="#chatsSection"] .collapse-arrow' },
+        { id: '#settingsSection', arrowSelector: '[data-target="#settingsSection"] .collapse-arrow' },
+        { id: '#providerModelSection', arrowSelector: '[data-target="#providerModelSection"] .collapse-arrow' }
+    ]);
     updateApiKeyStatus();
     initializeModel(selectedModel);
     updateSendBtn();
     renderChatHistory();
     updatePromptPosition();
     document.getElementById('saveChatBtn').addEventListener('click', saveCurrentChat);
-    renderChatList();    
+    renderChatList();
     updateStorageMeter();
     updateBubblesColWidth();
+    renderProviderDropdown();
+    updateProviderUI();
     renderModelDropdown();
 });
 
