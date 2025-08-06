@@ -1,7 +1,7 @@
 
 # Bubble UI
 
- - Bubble UI is an experimental, local-first chat interface for LLMs (currently Gemini), designed to explore new patterns in prompt management, context injection, and multi-conversation workflows. It’s a hands-on playground for AI developers and enthusiasts to experiment with advanced chat UI features, context management, and persistent local storage—all in the browser. Some UI elements and features may be experimental or subject to change, and not all controls are guaranteed to work perfectly in every scenario. This is an active area of development—feedback and contributions are welcome!
+ - Bubble UI is an experimental, local-first chat interface for LLMs (Gemini/Unsloth and custom endpoints supported out of the box ), designed to explore new patterns in prompt management, context injection, and multi-conversation workflows. It’s a hands-on playground for AI developers and enthusiasts to experiment with advanced chat UI features, context management, and persistent local storage—all in the browser. Some UI elements and features may be experimental or subject to change, and not all controls are guaranteed to work perfectly in every scenario. This is an active area of development—feedback and contributions are welcome!
 
 
 
