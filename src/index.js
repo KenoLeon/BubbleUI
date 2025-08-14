@@ -1310,6 +1310,7 @@ function renderProviderDropdown() {
         </li>
     `).join('');
     document.getElementById('currentProviderLabel').textContent = selectedProvider.name;
+    updateProviderModelInlineLabel();
 }
 
 function updateProviderUI() {
@@ -1323,6 +1324,18 @@ function updateProviderUI() {
     }
 }
 
+
+// Update the inline provider/model label in the chat input area
+function updateProviderModelInlineLabel() {
+    const label = document.getElementById('providerModelInlineLabel');
+    if (!label) return;
+    // Only show model for Gemini, otherwise just provider
+    if (selectedProviderId === 'gemini') {
+        label.textContent = `${selectedProvider.name} / ${selectedModel.name}`;
+    } else {
+        label.textContent = selectedProvider.name;
+    }
+}
 
 // Handle provider selection
 document.getElementById('providerDropdownMenu').addEventListener('click', (e) => {
@@ -1384,6 +1397,7 @@ function renderModelDropdown() {
     </li>
 `).join('');
     document.getElementById('currentModelLabel').textContent = `${selectedModel.name}`;
+    updateProviderModelInlineLabel();
 }
 
 
@@ -1401,6 +1415,7 @@ document.getElementById('modelDropdownMenu').addEventListener('click', (e) => {
         // Re-initialize backend logic here if needed:
         initializeModel(selectedModel);
     }
+    updateProviderModelInlineLabel();
 });
 
 
@@ -1475,6 +1490,7 @@ function setInitialCollapseState(sectionIds) {
         } else if (state === '1') {
             el.classList.add('show');
         }
+        updateProviderModelInlineLabel();
     });
 }
 
