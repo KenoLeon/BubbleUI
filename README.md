@@ -23,6 +23,11 @@ Or minimal zen :
 
 ## What's New !
 
+- **Tools Section:** Added a persistent Tools sidebar section.
+- **Auto-include current date/time:** Prepends the user's system date/time (via browser Intl API) to outgoing prompts (zero deps, persisted to localStorage).
+
+## Features
+
 - **Custom API Endpoint & Unsloth Compatibility:**  
   You can now connect Bubble UI to your own LLM backend or a Colab-hosted Unsloth model via a custom endpoint.  
   [See "Custom API & Unsloth Integration" below for details.](#custom-api--unsloth-integration)
@@ -36,10 +41,6 @@ Or minimal zen :
 
 - **Dark/light mode toggle:**  
   Instantly switch between dark and light themes using a sun/moon icon in the top right. Theme preference is remembered.
-
-
-## Features
-
 
 ### Model Switching
 

@@ -247,6 +247,24 @@ document.getElementById('clearAppDataBtn').addEventListener('click', clearAppSto
 
 
 /**
+ * Helper: get current date/time string from system settings (locale + IANA timezone)
+ * Uses browser Intl API (zero deps) so it reflects the user's system timezone/locale.
+ */
+function getCurrentDateString(format = 'human') {
+    const now = new Date();
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+    if (format === 'iso') {
+        return now.toISOString() + ` (${tz})`;
+    }
+    if (format === 'locale') {
+        return now.toLocaleString(undefined, { dateStyle: 'full', timeStyle: 'short' }) + ` (${tz})`;
+    }
+    // human (default)
+    return now.toLocaleString() + ` (${tz})`;
+}
+
+
+/**
  * Changes the chat sort order and updates the UI
  * @param {string} newOrder - Either 'recent' or 'oldest'
  */
@@ -882,14 +900,26 @@ sendBtn.addEventListener('click', async () => {
         contextBlock += "\n\n";
     }
 
-    // 4. Check if chat history is enabled and build the prompt
+    // 4. Auto-include current date/time from Tools toggle
+    const autoIncludeDate = localStorage.getItem('bubbleui_tools_date_auto') === '1';
+    if (autoIncludeDate) {
+        const dateStr = getCurrentDateString();
+        contextBlock = `Current date/time: ${dateStr}\n\n` + (contextBlock || '');
+        const sampleEl = document.getElementById('toolDateSample');
+        if (sampleEl) {
+            sampleEl.style.display = '';
+            sampleEl.textContent = `Current date/time: ${dateStr}`;
+        }
+    }
+
+    // 5. Check if chat history is enabled and build the prompt
     const chatHistoryEnabled = document.getElementById('chatHistoryToggle')?.checked;
     let historyBlock = '';
     if (chatHistoryEnabled) {
         historyBlock = buildChatHistoryString(chatHistory);
     }
 
-    // 5. Build the full prompt
+    // 6. Build the full prompt
     const showAvatar = document.getElementById('toggleAvatar')?.checked;
     let fullPrompt = '';
     if (showAvatar) {
@@ -901,10 +931,10 @@ sendBtn.addEventListener('click', async () => {
     }
     fullPrompt += `User: ${text}`;
 
-    // 6. Show the loading indicator
+    // 7. Show the loading indicator
     showPromptLoadingBubble();
 
-    // 7. Call the model and handle the response
+    // 8. Call the model and handle the response
     try {
         if (selectedProviderId === "gemini") {
             // --- Gemini logic (existing) ---
@@ -938,7 +968,7 @@ sendBtn.addEventListener('click', async () => {
             updateBubblesColWidth();
             updateActiveChatInStorage();
 
-            // AUTOSAVE LOGIC (unchanged)
+            // AUTOSAVE LOGIC
             const autosaveEnabled = document.getElementById('autosaveChatToggle')?.checked;
             if (autosaveEnabled && !activeChatId && !autosavedChatId) {
                 let chats = JSON.parse(localStorage.getItem('bubbleai_chats') || '[]');
@@ -1073,7 +1103,7 @@ function renderChatHistory() {
 
         // Message bubbles column (vertical stack)
         const bubblesCol = document.createElement('div');
-        const width = chatWidthSlider.value;
+        const width = chatWidthSlider.vaxlue;
         bubblesCol.style.width = width + '%';
         bubblesCol.style.marginLeft = 'auto';
         bubblesCol.style.marginRight = 'auto';
@@ -1525,6 +1555,28 @@ function setupSidebarSections(sections) {
 }
 
 
+function initTools() {
+    const autoToggle = document.getElementById('toolAutoDateToggle');
+    const sample = document.getElementById('toolDateSample');
+    const saved = localStorage.getItem('bubbleui_tools_date_auto') === '1';
+
+    if (autoToggle) {
+        autoToggle.checked = saved;
+        autoToggle.addEventListener('change', () => {
+            localStorage.setItem('bubbleui_tools_date_auto', autoToggle.checked ? '1' : '0');
+            if (sample) {
+                sample.style.display = autoToggle.checked ? '' : 'none';
+                if (autoToggle.checked) sample.textContent = 'Current date/time: ' + getCurrentDateString();
+            }
+        });
+    }
+
+    if (sample) {
+        sample.style.display = saved ? '' : 'none';
+        if (saved) sample.textContent = 'Current date/time: ' + getCurrentDateString();
+    }
+}
+
 
 
 /**
@@ -1561,13 +1613,15 @@ document.getElementById('exportDataBtn').addEventListener('click', () => {
 
 document.addEventListener('DOMContentLoaded', function () {
     setInitialCollapseState([
+        '#toolsSection',
         '#contextSection',
         '#chatsSection',
         '#settingsSection',
-        '#providerModelSection'
+        '#providerModelSection',
     ]);
     document.getElementById('sidebar').style.visibility = 'visible';
     setupSidebarSections([
+        { id: '#toolsSection', arrowSelector: '[data-target="#toolsSection"] .collapse-arrow' },
         { id: '#contextSection', arrowSelector: '[data-target="#contextSection"] .collapse-arrow' },
         { id: '#chatsSection', arrowSelector: '[data-target="#chatsSection"] .collapse-arrow' },
         { id: '#settingsSection', arrowSelector: '[data-target="#settingsSection"] .collapse-arrow' },
@@ -1585,5 +1639,6 @@ document.addEventListener('DOMContentLoaded', function () {
     renderProviderDropdown();
     updateProviderUI();
     renderModelDropdown();
+    initTools();
 });
 
